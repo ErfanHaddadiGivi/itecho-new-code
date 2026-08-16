@@ -23,6 +23,7 @@ $siteName = Setting::get('site_name', 'ایتکو');
     <meta name="description" content="<?= e(Setting::get('site_description', '')) ?>">
     <title><?= e($title ?? $siteName) ?></title>
     <link rel="icon" type="image/svg+xml" href="<?= e(asset('img/favicon.svg')) ?>">
+    <link rel="preload" href="<?= e(url('assets/fonts/Vazirmatn-Variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= e(asset('css/base.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('css/site.css')) ?>">
 </head>
@@ -73,13 +74,17 @@ $siteName = Setting::get('site_name', 'ایتکو');
                           stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                 </svg>
             </a>
-            <a class="icon-btn" href="<?= e(url('cart')) ?>" aria-label="سبد خرید">
+            <a class="icon-btn icon-btn--cart" href="<?= e(url('cart')) ?>" aria-label="سبد خرید">
                 <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
                     <path d="M4 5h2l2 10h9l2-7H7" fill="none" stroke="currentColor" stroke-width="1.8"
                           stroke-linecap="round" stroke-linejoin="round"/>
                     <circle cx="10" cy="19" r="1.4" fill="currentColor"/>
                     <circle cx="17" cy="19" r="1.4" fill="currentColor"/>
                 </svg>
+                <?php $cartCount = App\Models\Cart::count(); ?>
+                <span class="cart-badge" id="cart-badge" <?= $cartCount === 0 ? 'hidden' : '' ?>>
+                    <?= e(fa_digits((string) $cartCount)) ?>
+                </span>
             </a>
         </div>
     </div>
@@ -176,6 +181,9 @@ $siteName = Setting::get('site_name', 'ایتکو');
 </footer>
 
 <script src="<?= e(asset('js/site.js')) ?>" defer></script>
+<?php foreach (($scripts ?? []) as $script): ?>
+<script src="<?= e(asset('js/' . $script)) ?>" defer></script>
+<?php endforeach; ?>
 </body>
 </html>
 <?php Flash::clearOld(); ?>

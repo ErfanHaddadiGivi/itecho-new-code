@@ -31,6 +31,7 @@ $isActive = static function (string $segment) use ($path): string {
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title ?? 'پنل مدیریت') ?> | پنل ایتکو</title>
     <link rel="icon" type="image/svg+xml" href="<?= e(asset('img/favicon.svg')) ?>">
+    <link rel="preload" href="<?= e(url('assets/fonts/Vazirmatn-Variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= e(asset('css/base.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('css/admin.css')) ?>">
 </head>
@@ -50,6 +51,7 @@ $isActive = static function (string $segment) use ($path): string {
         <nav class="admin-nav">
             <span class="admin-nav__label">فروشگاه</span>
             <a class="admin-nav__link<?= $isActive('admin') ?>" href="<?= e(url('admin')) ?>">داشبورد</a>
+            <a class="admin-nav__link<?= $isActive('products') ?>" href="<?= e(url('admin/products')) ?>">محصولات</a>
             <a class="admin-nav__link<?= $isActive('categories') ?>" href="<?= e(url('admin/categories')) ?>">دسته‌بندی‌ها</a>
             <a class="admin-nav__link<?= $isActive('brands') ?>" href="<?= e(url('admin/brands')) ?>">برندها</a>
 
@@ -57,7 +59,6 @@ $isActive = static function (string $segment) use ($path): string {
             <a class="admin-nav__link<?= $isActive('settings') ?>" href="<?= e(url('admin/settings')) ?>">تنظیمات</a>
 
             <span class="admin-nav__label">به‌زودی</span>
-            <span class="admin-nav__link is-disabled">محصولات</span>
             <span class="admin-nav__link is-disabled">سفارش‌ها</span>
             <span class="admin-nav__link is-disabled">نظرات</span>
         </nav>
@@ -99,6 +100,9 @@ $isActive = static function (string $segment) use ($path): string {
 </div>
 
 <script src="<?= e(asset('js/admin.js')) ?>" defer></script>
+<?php foreach (($scripts ?? []) as $script): ?>
+<script src="<?= e(asset('js/' . $script)) ?>" defer></script>
+<?php endforeach; ?>
 </body>
 </html>
 <?php Flash::clearOld(); ?>

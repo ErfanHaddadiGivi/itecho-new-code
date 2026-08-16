@@ -15,6 +15,18 @@
 // =====================================================================
 $router->get('/', 'HomeController@index');
 
+// دسته‌بندی، محصول و جستجو
+$router->get('/category/{slug}', 'CategoryController@show');
+$router->get('/product/{slug}',  'ProductController@show');
+$router->get('/search',          'SearchController@index');
+$router->get('/search/suggest',  'SearchController@suggest');
+
+// سبد خرید
+$router->get('/cart',         'CartController@index');
+$router->post('/cart/add',    'CartController@add');
+$router->post('/cart/update', 'CartController@update');
+$router->post('/cart/remove', 'CartController@remove');
+
 // صفحات ثابت اینماد: قوانین، حریم خصوصی، درباره ما، تماس با ما
 $router->get('/page/{slug}', 'PageController@show');
 
@@ -38,6 +50,14 @@ $router->post('/admin/categories',            'Admin\CategoryController@store');
 $router->get('/admin/categories/{id}/edit',   'Admin\CategoryController@edit');
 $router->post('/admin/categories/{id}',       'Admin\CategoryController@update');
 $router->post('/admin/categories/{id}/delete','Admin\CategoryController@destroy');
+
+// --- محصولات ---
+$router->get('/admin/products',             'Admin\ProductController@index');
+$router->get('/admin/products/create',      'Admin\ProductController@create');
+$router->post('/admin/products',            'Admin\ProductController@store');
+$router->get('/admin/products/{id}/edit',   'Admin\ProductController@edit');
+$router->post('/admin/products/{id}',       'Admin\ProductController@update');
+$router->post('/admin/products/{id}/delete','Admin\ProductController@destroy');
 
 // --- برندها ---
 $router->get('/admin/brands',             'Admin\BrandController@index');

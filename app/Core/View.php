@@ -22,6 +22,9 @@ class View
         // عنوان صفحه برای تگ <title>
         $title = $data['title'] ?? 'ایتکو';
 
+        // فایل‌های جاوااسکریپت مخصوص این صفحه، مثل ['product.js']
+        $scripts = $data['scripts'] ?? [];
+
         $layoutFile = APP_PATH . '/Views/layouts/' . $layout . '.php';
 
         if (!is_file($layoutFile)) {

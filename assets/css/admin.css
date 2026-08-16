@@ -160,7 +160,8 @@ body.centered-page {
     .sidebar-toggle { display: inline-flex; }
 
     .admin-sidebar {
-        position: fixed; inset-block: 0; inset-inline-end: 0; z-index: 50;
+        /* inline-start در حالت راست‌چین یعنی لبه راست — نوار کناری از راست وارد می‌شود */
+        position: fixed; inset-block: 0; inset-inline-start: 0; z-index: 50;
         transform: translateX(100%); transition: transform .2s ease;
         box-shadow: -8px 0 24px -18px rgba(22, 33, 28, .5);
     }
@@ -168,4 +169,88 @@ body.centered-page {
 
     .admin-content { padding: 16px; }
     .page-actions { flex-direction: column; }
+}
+
+/* =====================================================================
+   مرحله ۳ — مدیریت محصولات
+   ===================================================================== */
+
+/* ---- نوار جستجو و فیلتر ---- */
+.toolbar {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 12px 14px; margin-bottom: 16px;
+}
+.toolbar input[type="search"], .toolbar select {
+    font-family: inherit; font-size: 13.5px; padding: 8px 11px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--ink);
+}
+.toolbar input[type="search"] { flex: 1; min-width: 180px; }
+
+/* ---- جدول محصولات ---- */
+.cell-thumb { width: 56px; }
+.cell-thumb img {
+    width: 46px; height: 46px; object-fit: contain;
+    background: var(--line-soft); border-radius: var(--radius-sm);
+}
+.thumb-empty { color: var(--muted); }
+.block { display: block; }
+
+/* ---- فرم دو ستونه ---- */
+.grid-2 { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 620px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+/* ---- مشخصات فنی ---- */
+.spec-row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.spec-row input {
+    flex: 1; min-width: 140px; font-family: inherit; font-size: 14px; padding: 9px 11px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--ink);
+}
+
+/* ---- تنوع محصول ---- */
+.variants__table { min-width: 520px; }
+.variants__table input {
+    width: 100%; font-family: inherit; font-size: 13.5px; padding: 7px 9px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--ink);
+}
+.variant-row__title { font-weight: 600; font-size: 13.5px; white-space: nowrap; }
+
+.variant-builder {
+    display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px;
+    padding: 14px; margin-top: 12px;
+    background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius);
+}
+.variant-builder__selects { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; }
+.variant-builder__field { display: flex; flex-direction: column; gap: 5px; font-size: 12.5px; color: var(--muted); }
+.variant-builder__field select {
+    font-family: inherit; font-size: 13.5px; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); color: var(--ink); min-width: 140px;
+}
+
+/* ---- تصاویر ---- */
+.current-image { margin-bottom: 8px; }
+.current-image img {
+    width: 110px; height: 110px; object-fit: contain;
+    background: var(--line-soft); border: 1px solid var(--line); border-radius: var(--radius-sm);
+}
+.gallery-manage { display: flex; flex-wrap: wrap; gap: 10px; }
+.gallery-manage__item {
+    display: flex; flex-direction: column; gap: 5px; align-items: center;
+    padding: 7px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); cursor: pointer; font-size: 12px; color: var(--muted);
+}
+.gallery-manage__item img {
+    width: 82px; height: 82px; object-fit: contain; background: var(--line-soft);
+    border-radius: 4px;
+}
+.gallery-manage__item span { display: flex; align-items: center; gap: 5px; }
+
+.field input[type="file"] {
+    font-family: inherit; font-size: 13px; padding: 9px;
+    border: 1px dashed var(--line); border-radius: var(--radius-sm);
+    background: var(--bg); width: 100%; cursor: pointer;
 }

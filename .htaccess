@@ -62,6 +62,12 @@ DirectoryIndex index.php
     ExpiresByType image/svg+xml "access plus 1 month"
     ExpiresByType text/css   "access plus 1 week"
     ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# --- نوع صحیح فایل فونت (بعضی هاست‌ها پیش‌فرض ندارند) ---
+<IfModule mod_mime.c>
+    AddType font/woff2 .woff2
 </IfModule>
 
 # --- کدگذاری پیش‌فرض فارسی ---

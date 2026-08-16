@@ -3,6 +3,21 @@
    طراحی موبایل-اول و کاملاً راست‌چین
    ===================================================================== */
 
+/* ---------------------------------------------------------------------
+   فونت وزیرمتن — فایل محلی، بدون وابستگی به CDN خارجی.
+   یک فونت متغیر است و همه وزن‌های ۱۰۰ تا ۹۰۰ را در یک فایل دارد.
+   font-display: swap یعنی متن بلافاصله با فونت سیستم نمایش داده می‌شود
+   و به‌محض آماده شدن وزیرمتن جایگزین می‌شود (صفحه سفید نمی‌ماند).
+   --------------------------------------------------------------------- */
+@font-face {
+    font-family: "Vazirmatn";
+    src: url("../fonts/Vazirmatn-Variable.woff2") format("woff2-variations"),
+         url("../fonts/Vazirmatn-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
     /* رنگ‌ها */
     --brand:        #0B6E4F;
@@ -35,6 +50,11 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+
+/* عنصری که ویژگی hidden دارد باید همیشه پنهان بماند.
+   بدون این خط، هر قانون display در CSS (مثل display:flex) بر hidden غلبه می‌کند
+   و عنصر با وجود hidden نمایش داده می‌شود. */
+[hidden] { display: none !important; }
 
 html { -webkit-text-size-adjust: 100%; }
 

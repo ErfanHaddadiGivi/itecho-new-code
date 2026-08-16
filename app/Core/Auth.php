@@ -48,6 +48,9 @@ class Auth
 
     public static function login(int $userId): void
     {
+        // سبد مهمان باید قبل از پاک شدن کوکی‌ها به حساب کاربر منتقل شود
+        \App\Models\Cart::mergeGuestCartInto($userId);
+
         // شناسه نشست را عوض می‌کنیم تا حمله Session Fixation ممکن نباشد
         Session::regenerate();
         Session::set(self::USER_KEY, $userId);

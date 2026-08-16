@@ -59,4 +59,170 @@
             }
         }
     });
+
+    // ---------------------------------------------------------------
+    // گرفتن تایید قبل از حذف (فرم‌هایی با ویژگی data-confirm)
+    // ---------------------------------------------------------------
+    document.querySelectorAll('form[data-confirm]').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!window.confirm(form.getAttribute('data-confirm'))) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    // ---------------------------------------------------------------
+    // باز و بسته کردن نوار فیلتر در موبایل
+    // ---------------------------------------------------------------
+    var filters       = document.getElementById('filters');
+    var filtersToggle = document.querySelector('.filters-toggle');
+    var filtersClose  = document.querySelector('.filters__close');
+
+    if (filters && filtersToggle) {
+        filtersToggle.addEventListener('click', function () {
+            filters.classList.add('is-open');
+        });
+    }
+    if (filters && filtersClose) {
+        filtersClose.addEventListener('click', function () {
+            filters.classList.remove('is-open');
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // پیشنهاد جستجوی زنده
+    // ---------------------------------------------------------------
+    var searchForm  = document.querySelector('.search');
+    var searchInput = searchForm ? searchForm.querySelector('input[name="q"]') : null;
+
+    if (searchInput) {
+        var box = document.createElement('div');
+        box.className = 'suggest';
+        box.hidden = true;
+        searchForm.appendChild(box);
+
+        var timer   = null;
+        var lastUrl = searchForm.getAttribute('action').replace(/\/search$/, '/search/suggest');
+
+        function hide() { box.hidden = true; box.innerHTML = ''; }
+
+        searchInput.addEventListener('input', function () {
+            var term = searchInput.value.trim();
+
+            window.clearTimeout(timer);
+
+            if (term.length < 2) { hide(); return; }
+
+            // کمی صبر می‌کنیم تا با هر حرف یک درخواست فرستاده نشود
+            timer = window.setTimeout(function () {
+                fetch(lastUrl + '?q=' + encodeURIComponent(term), {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (!data.items || data.items.length === 0) { hide(); return; }
+
+                        box.innerHTML = '';
+
+                        data.items.forEach(function (item) {
+                            var link = document.createElement('a');
+                            link.className = 'suggest__item';
+                            link.href = item.url;
+
+                            if (item.image) {
+                                var img = document.createElement('img');
+                                img.src = item.image;
+                                img.alt = '';
+                                link.appendChild(img);
+                            }
+
+                            var name = document.createElement('span');
+                            name.className = 'suggest__name';
+                            name.textContent = item.name;   // متن، نه HTML
+                            link.appendChild(name);
+
+                            var price = document.createElement('span');
+                            price.className = 'suggest__price';
+                            price.textContent = item.price;
+                            link.appendChild(price);
+
+                            box.appendChild(link);
+                        });
+
+                        box.hidden = false;
+                    })
+                    .catch(hide);
+            }, 250);
+        });
+
+        // بستن با کلیک بیرون یا Escape
+        document.addEventListener('click', function (event) {
+            if (!searchForm.contains(event.target)) { hide(); }
+        });
+        searchInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') { hide(); }
+        });
+    }
+
+    // ---------------------------------------------------------------
+    // افزودن به سبد بدون بارگذاری دوباره صفحه
+    // ---------------------------------------------------------------
+    var buyForm = document.getElementById('buy-form');
+
+    if (buyForm) {
+        buyForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var button = buyForm.querySelector('button[type=submit]');
+            var label  = button.textContent;
+
+            button.disabled = true;
+            button.textContent = 'در حال افزودن…';
+
+            fetch(buyForm.action, {
+                method: 'POST',
+                body: new FormData(buyForm),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    showToast(data.message, data.ok ? 'success' : 'error');
+
+                    if (data.ok) {
+                        var badge = document.getElementById('cart-badge');
+                        if (badge) {
+                            badge.textContent = toFa(String(data.count));
+                            badge.hidden = false;
+                        }
+                    }
+                })
+                .catch(function () {
+                    // اگر جاوااسکریپت به مشکل خورد، فرم به روش معمولی ارسال شود
+                    buyForm.submit();
+                })
+                .finally(function () {
+                    button.disabled = false;
+                    button.textContent = label;
+                });
+        });
+    }
+
+    function toFa(text) {
+        var fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+        return text.replace(/\d/g, function (d) { return fa[d]; });
+    }
+
+    function showToast(message, type) {
+        var toast = document.createElement('div');
+        toast.className = 'toast toast--' + type;
+        toast.setAttribute('role', 'status');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        window.setTimeout(function () { toast.classList.add('is-visible'); }, 10);
+        window.setTimeout(function () {
+            toast.classList.remove('is-visible');
+            window.setTimeout(function () { toast.remove(); }, 300);
+        }, 3000);
+    }
 })();

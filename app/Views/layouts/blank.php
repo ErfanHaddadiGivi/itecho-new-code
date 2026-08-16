@@ -18,6 +18,7 @@ $messages = Flash::pull();
     <meta name="robots" content="noindex, nofollow">
     <title><?= e($title ?? 'ایتکو') ?></title>
     <link rel="icon" type="image/svg+xml" href="<?= e(asset('img/favicon.svg')) ?>">
+    <link rel="preload" href="<?= e(url('assets/fonts/Vazirmatn-Variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= e(asset('css/base.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('css/admin.css')) ?>">
 </head>
