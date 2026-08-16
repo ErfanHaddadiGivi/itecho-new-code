@@ -1,0 +1,21 @@
+# فایل تنظیمات حاوی رمزها (روی هاست ساخته می‌شود، در گیت نباشد)
+config/config.local.php
+.env
+
+# فایل‌های آپلودی کاربران
+public/uploads/*
+!public/uploads/.gitkeep
+
+# لاگ‌ها و فایل‌های موقت
+*.log
+logs/
+tmp/
+
+# فایل‌های سیستمی
+.DS_Store
+Thumbs.db
+
+# ادیتورها
+.idea/
+.vscode/
+*.swp
