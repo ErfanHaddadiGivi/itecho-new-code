@@ -1,0 +1,15 @@
+# فایل‌های آپلودی فقط باید نمایش داده شوند، نه اجرا.
+# این جلوی آپلود یک فایل PHP مخرب و اجرای آن را می‌گیرد.
+php_flag engine off
+<IfModule mod_rewrite.c>
+    RewriteEngine Off
+</IfModule>
+<FilesMatch "\.(php|php3|php4|php5|php7|php8|phtml|phar|cgi|pl|py|sh)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

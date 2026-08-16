@@ -1,0 +1,171 @@
+/* =====================================================================
+   ایتکو — استایل پنل مدیریت
+   ===================================================================== */
+
+body.admin { background: var(--bg); }
+
+.admin-shell { display: flex; min-height: 100vh; }
+
+/* ---------------------------------------------------------------------
+   نوار کناری
+   --------------------------------------------------------------------- */
+.admin-sidebar {
+    width: 232px; flex-shrink: 0;
+    background: var(--surface); border-inline-start: 1px solid var(--line);
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh;
+}
+.admin-sidebar__head { padding: 18px 18px 14px; border-bottom: 1px solid var(--line-soft); }
+
+.admin-nav { flex: 1; padding: 14px 12px; overflow-y: auto; }
+.admin-nav__label {
+    display: block; padding: 12px 10px 6px;
+    font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing: .03em;
+}
+.admin-nav__link {
+    display: block; padding: 9px 12px; margin-bottom: 2px;
+    border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; color: var(--ink);
+}
+.admin-nav__link:hover { background: var(--line-soft); text-decoration: none; }
+.admin-nav__link.is-active { background: var(--brand-soft); color: var(--brand); font-weight: 700; }
+.admin-nav__link.is-disabled { color: #A9B5AF; cursor: default; }
+.admin-nav__link.is-disabled:hover { background: none; }
+
+.admin-sidebar__foot {
+    padding: 14px 18px; border-top: 1px solid var(--line-soft); font-size: 13px;
+}
+
+/* ---------------------------------------------------------------------
+   بخش اصلی
+   --------------------------------------------------------------------- */
+.admin-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.admin-topbar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px; background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 30;
+}
+.admin-topbar__title { margin: 0; font-size: 17px; }
+.admin-topbar__user { margin-inline-start: auto; display: flex; align-items: center; gap: 12px; }
+.admin-topbar__name { font-size: 13.5px; color: var(--muted); }
+
+.sidebar-toggle { display: none; }
+
+.admin-content { padding: 20px; flex: 1; }
+
+/* ---------------------------------------------------------------------
+   پنل‌ها
+   --------------------------------------------------------------------- */
+.panel {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 20px; margin-bottom: 18px;
+}
+.panel__title {
+    margin: 0 0 14px; font-size: 15px; font-weight: 700;
+    padding-bottom: 10px; border-bottom: 1px solid var(--line-soft);
+}
+.panel--form { max-width: 720px; }
+.panel--todo { border-inline-start: 3px solid var(--accent); }
+
+.page-actions {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+}
+.page-hint { color: var(--muted); font-size: 13px; margin: 0; max-width: 62ch; line-height: 1.9; }
+
+/* ---------------------------------------------------------------------
+   داشبورد
+   --------------------------------------------------------------------- */
+.stat-grid {
+    display: grid; gap: 12px; margin-bottom: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+.stat-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px 18px;
+}
+.stat-card__value {
+    display: block; font-size: 21px; font-weight: 800; color: var(--brand); line-height: 1.4;
+}
+.stat-card__label { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+.todo-list { display: flex; flex-direction: column; gap: 8px; }
+.todo-list li { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.todo-list__count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 26px; height: 26px; padding: 0 7px;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 20px; font-weight: 700; font-size: 13px;
+}
+
+.two-col { display: grid; gap: 18px; grid-template-columns: 1fr; }
+@media (min-width: 1020px) { .two-col { grid-template-columns: 1.6fr 1fr; } }
+
+.simple-list { display: flex; flex-direction: column; }
+.simple-list li {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--line-soft); font-size: 13.5px;
+}
+.simple-list li:last-child { border-bottom: none; }
+
+.stock-pill {
+    background: var(--warn-soft); color: var(--warn);
+    padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.stock-pill--zero { background: var(--danger-soft); color: var(--danger); }
+
+/* ---------------------------------------------------------------------
+   جدول دسته‌بندی درختی
+   --------------------------------------------------------------------- */
+.row--parent td:first-child { font-weight: 700; }
+.row--child  td:first-child { padding-inline-start: 30px; color: var(--muted); }
+.tree-branch { color: var(--line); margin-inline-end: 4px; }
+
+/* ---------------------------------------------------------------------
+   نوار ذخیره چسبان در تنظیمات
+   --------------------------------------------------------------------- */
+.form-actions--sticky {
+    position: sticky; bottom: 0;
+    /* هم‌عرض با پنل‌های فرم بماند، وگرنه تا لبه صفحه کشیده می‌شود */
+    max-width: 720px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 12px 16px;
+    box-shadow: 0 -4px 14px -10px rgba(22, 33, 28, .4);
+}
+
+/* ---------------------------------------------------------------------
+   صفحه ورود
+   --------------------------------------------------------------------- */
+body.centered-page {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 20px; background: var(--bg);
+}
+.centered-page__inner { width: 100%; max-width: 400px; }
+
+.login-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 30px 26px; box-shadow: var(--shadow);
+}
+.login-card__head { text-align: center; margin-bottom: 22px; }
+.login-card__head h1 { font-size: 18px; margin: 14px 0 4px; }
+.login-card__head p  { color: var(--muted); font-size: 13.5px; margin: 0; }
+.login-card__foot { text-align: center; margin: 18px 0 0; font-size: 13px; }
+
+/* ---------------------------------------------------------------------
+   موبایل
+   --------------------------------------------------------------------- */
+@media (max-width: 900px) {
+    .sidebar-toggle { display: inline-flex; }
+
+    .admin-sidebar {
+        position: fixed; inset-block: 0; inset-inline-end: 0; z-index: 50;
+        transform: translateX(100%); transition: transform .2s ease;
+        box-shadow: -8px 0 24px -18px rgba(22, 33, 28, .5);
+    }
+    .admin-sidebar.is-open { transform: translateX(0); }
+
+    .admin-content { padding: 16px; }
+    .page-actions { flex-direction: column; }
+}

@@ -2,14 +2,21 @@
 config/config.local.php
 .env
 
-# فایل‌های آپلودی کاربران
-public/uploads/*
-!public/uploads/.gitkeep
+# فایل‌های آپلودی کاربران — خود پوشه بماند، محتوایش نه
+uploads/*
+!uploads/.htaccess
+!uploads/products/
+uploads/products/*
+!uploads/products/.gitkeep
 
-# لاگ‌ها و فایل‌های موقت
-*.log
-logs/
+# لاگ‌ها — خود پوشه بماند تا PHP بتواند در آن بنویسد
+logs/*
+!logs/.htaccess
+!logs/.gitkeep
+
+# فایل‌های موقت
 tmp/
+*.log
 
 # فایل‌های سیستمی
 .DS_Store
@@ -19,3 +26,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# ابزارهای توسعه (در این پروژه استفاده نمی‌شوند)
+node_modules/
+vendor/

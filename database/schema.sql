@@ -27,9 +27,10 @@ CREATE TABLE settings (
   setting_value  TEXT DEFAULT NULL     COMMENT 'مقدار تنظیم',
   setting_group  VARCHAR(50)  NOT NULL DEFAULT 'general' COMMENT 'گروه‌بندی برای نمایش در پنل: general/payment/mail/shipping',
   title          VARCHAR(150) DEFAULT NULL COMMENT 'عنوان فارسی برای نمایش در فرم پنل',
+  sort_order     INT NOT NULL DEFAULT 0 COMMENT 'ترتیب نمایش فیلد در فرم تنظیمات پنل',
   updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (setting_key),
-  KEY idx_settings_group (setting_group)
+  KEY idx_settings_group (setting_group, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='تنظیمات سایت به صورت کلید/مقدار';
 

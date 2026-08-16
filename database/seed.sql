@@ -23,40 +23,40 @@ INSERT INTO users (id, first_name, last_name, email, phone, password_hash, role,
 -- ---------------------------------------------------------------------
 --  تنظیمات سایت
 -- ---------------------------------------------------------------------
-INSERT INTO settings (setting_key, setting_value, setting_group, title) VALUES
+INSERT INTO settings (setting_key, setting_value, setting_group, title, sort_order) VALUES
 -- عمومی
-('site_name',            'ایتکو',                     'general',  'نام سایت'),
-('site_title',           'Itecho | فروشگاه موبایل، کامپیوتر و گیمینگ', 'general', 'عنوان صفحه اصلی'),
-('site_description',     'فروشگاه اینترنتی ایتکو؛ موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ', 'general', 'توضیح متا'),
-('site_email',           'info@itecho.ir',            'general',  'ایمیل فروشگاه'),
-('site_phone',           '',                          'general',  'تلفن تماس'),
-('site_address',         '',                          'general',  'آدرس فروشگاه'),
-('instagram_url',        '',                          'general',  'اینستاگرام'),
-('telegram_url',         '',                          'general',  'تلگرام'),
-('whatsapp_number',      '',                          'general',  'واتس‌اپ'),
-('enamad_code',          '',                          'general',  'کد HTML نماد اعتماد الکترونیکی'),
-('products_per_page',    '12',                        'general',  'تعداد محصول در هر صفحه'),
-('maintenance_mode',     '0',                         'general',  'حالت تعمیرات سایت'),
+('site_name',            'ایتکو',                     'general',  'نام سایت', 10),
+('site_title',           'Itecho | فروشگاه موبایل، کامپیوتر و گیمینگ', 'general', 'عنوان صفحه اصلی', 20),
+('site_description',     'فروشگاه اینترنتی ایتکو؛ موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ', 'general', 'توضیح متا', 30),
+('site_email',           'info@itecho.ir',            'general',  'ایمیل فروشگاه', 40),
+('site_phone',           '',                          'general',  'تلفن تماس', 50),
+('site_address',         '',                          'general',  'آدرس فروشگاه', 60),
+('instagram_url',        '',                          'general',  'اینستاگرام', 70),
+('telegram_url',         '',                          'general',  'تلگرام', 80),
+('whatsapp_number',      '',                          'general',  'واتس‌اپ', 90),
+('enamad_code',          '',                          'general',  'کد HTML نماد اعتماد الکترونیکی', 100),
+('products_per_page',    '12',                        'general',  'تعداد محصول در هر صفحه', 110),
+('maintenance_mode',     '0',                         'general',  'حالت تعمیرات سایت', 120),
 
 -- ارسال
-('pickup_fee',           '0',                         'shipping', 'هزینه ثابت دریافت حضوری (تومان)'),
-('pickup_address',       '',                          'shipping', 'آدرس محل دریافت حضوری'),
-('shipping_note',        'هزینه ارسال پستی پس از بسته‌بندی توسط کارشناس محاسبه و لینک پرداخت آن برای شما ارسال می‌شود.', 'shipping', 'توضیح ارسال پستی'),
+('pickup_fee',           '0',                         'shipping', 'هزینه ثابت دریافت حضوری (تومان)', 10),
+('pickup_address',       '',                          'shipping', 'آدرس محل دریافت حضوری', 20),
+('shipping_note',        'هزینه ارسال پستی پس از بسته‌بندی توسط کارشناس محاسبه و لینک پرداخت آن برای شما ارسال می‌شود.', 'shipping', 'توضیح ارسال پستی', 30),
 
 -- درگاه پرداخت (زرین‌پال)
-('zarinpal_merchant_id', '00000000-0000-0000-0000-000000000000', 'payment', 'کد مرچنت زرین‌پال'),
-('zarinpal_sandbox',     '1',                         'payment',  'حالت تست زرین‌پال (۱ = تست، ۰ = واقعی)'),
-('currency_label',       'تومان',                     'payment',  'واحد پول'),
+('zarinpal_merchant_id', '00000000-0000-0000-0000-000000000000', 'payment', 'کد مرچنت زرین‌پال', 10),
+('zarinpal_sandbox',     '1',                         'payment',  'حالت تست زرین‌پال (۱ = تست، ۰ = واقعی)', 20),
+('currency_label',       'تومان',                     'payment',  'واحد پول', 30),
 
 -- ایمیل (Gmail SMTP با PHPMailer)
-('smtp_host',            'smtp.gmail.com',            'mail',     'هاست SMTP'),
-('smtp_port',            '587',                       'mail',     'پورت SMTP'),
-('smtp_secure',          'tls',                       'mail',     'نوع رمزنگاری (tls یا ssl)'),
-('smtp_username',        '',                          'mail',     'نام کاربری Gmail'),
-('smtp_password',        '',                          'mail',     'رمز عبور اپلیکیشن Gmail'),
-('smtp_from_email',      '',                          'mail',     'ایمیل فرستنده'),
-('smtp_from_name',       'فروشگاه ایتکو',             'mail',     'نام فرستنده'),
-('otp_expire_minutes',   '10',                        'mail',     'مدت اعتبار کد تایید (دقیقه)');
+('smtp_host',            'smtp.gmail.com',            'mail',     'هاست SMTP', 10),
+('smtp_port',            '587',                       'mail',     'پورت SMTP', 20),
+('smtp_secure',          'tls',                       'mail',     'نوع رمزنگاری (tls یا ssl)', 30),
+('smtp_username',        '',                          'mail',     'نام کاربری Gmail', 40),
+('smtp_password',        '',                          'mail',     'رمز عبور اپلیکیشن Gmail', 50),
+('smtp_from_email',      '',                          'mail',     'ایمیل فرستنده', 60),
+('smtp_from_name',       'فروشگاه ایتکو',             'mail',     'نام فرستنده', 70),
+('otp_expire_minutes',   '10',                        'mail',     'مدت اعتبار کد تایید (دقیقه)', 80);
 
 
 -- ---------------------------------------------------------------------
