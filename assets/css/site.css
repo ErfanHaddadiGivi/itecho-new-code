@@ -707,3 +707,107 @@
     font-size: 12.5px; padding: 8px 0; border-bottom: 1px solid var(--line-soft);
 }
 .payment-list li:last-child { border-bottom: none; }
+
+/* =====================================================================
+   مرحله ۵ — حساب کاربری، علاقه‌مندی و نظرات
+   ===================================================================== */
+
+/* ---- دکمه علاقه‌مندی روی کارت محصول ---- */
+.product-card-wrap { position: relative; display: flex; }
+.product-card-wrap .product-card { flex: 1; }
+.wish-form { position: absolute; top: 8px; inset-inline-end: 8px; z-index: 2; }
+.wish-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; padding: 0; cursor: pointer;
+    background: rgba(255, 255, 255, .92); color: var(--muted);
+    border: 1px solid var(--line); border-radius: 50%;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+}
+.wish-btn:hover { color: var(--danger); border-color: var(--danger); }
+.wish-btn.is-on { color: var(--danger); border-color: var(--danger); background: #fff; }
+.wish-btn.is-on svg path { fill: currentColor; }
+
+/* کارت کارکرده نشانش را جابه‌جا می‌کند تا زیر قلب نیفتد */
+.product-card-wrap .product-card__used { inset-inline-end: 46px; }
+
+/* ---- چیدمان حساب کاربری ---- */
+.account { display: grid; grid-template-columns: 1fr; gap: 18px; padding-bottom: 40px; }
+@media (min-width: 860px) { .account { grid-template-columns: 210px 1fr; align-items: start; } }
+
+.account-nav {
+    display: flex; flex-direction: column; gap: 2px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 10px;
+}
+.account-nav__link {
+    display: block; padding: 10px 13px; border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--ink); text-align: right;
+    background: none; border: none; width: 100%; cursor: pointer; font-family: inherit;
+}
+.account-nav__link:hover { background: var(--line-soft); text-decoration: none; }
+.account-nav__link.is-active { background: var(--brand-soft); color: var(--brand); font-weight: 700; }
+.account-nav__logout { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line-soft); }
+.account-nav__link--exit { color: var(--danger); }
+.account-nav__link--exit:hover { background: var(--danger-soft); }
+
+@media (max-width: 859px) {
+    .account-nav { flex-direction: row; flex-wrap: wrap; }
+    .account-nav__link { width: auto; }
+    .account-nav__logout { margin: 0; padding: 0; border: none; }
+}
+
+.account__main { min-width: 0; }
+
+.account-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.account-stat {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px; text-align: center; color: var(--ink);
+    transition: border-color .15s ease;
+}
+.account-stat:hover { border-color: var(--brand); text-decoration: none; }
+.account-stat__value { display: block; font-size: 21px; font-weight: 800; color: var(--brand); }
+.account-stat__label { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+
+.to-review { display: flex; flex-direction: column; gap: 8px; }
+.to-review li { font-size: 13.5px; }
+
+/* ---- دفترچه آدرس ---- */
+.address-list { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); }
+.address-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px; font-size: 13.5px;
+}
+.address-card.is-default { border-color: var(--brand); }
+.address-card__head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.address-card__actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ---- علاقه‌مندی‌ها ---- */
+.wishlist-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.wishlist-item { display: flex; flex-direction: column; gap: 8px; }
+.wishlist-item__note { margin: 0; font-size: 12px; color: var(--danger); text-align: center; }
+
+/* ---- نظرات ---- */
+.review__pending { margin: 8px 0 0; font-size: 12.5px; color: var(--warn); }
+
+.review-form { display: flex; flex-direction: column; gap: 14px; }
+.star-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+.star-input input { position: absolute; opacity: 0; pointer-events: none; }
+.star-input label {
+    font-size: 27px; line-height: 1; color: var(--line); cursor: pointer;
+    transition: color .12s ease;
+}
+/* در RTL ستاره‌ها معکوس چیده شده‌اند، پس هم خودش و هم بعدی‌ها رنگی می‌شوند */
+.star-input input:checked ~ label,
+.star-input label:hover,
+.star-input label:hover ~ label { color: var(--accent); }
+.star-input input:focus-visible + label { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+.review-login-note {
+    background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius-sm);
+    padding: 14px 16px; font-size: 13.5px; color: var(--muted); margin: 0;
+}
+
+.buy-box-tail { display: flex; flex-direction: column; gap: 10px; }
+.wish-inline { margin-top: -4px; }
+.wish-inline__btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.wish-inline__btn.is-on { color: var(--danger); border-color: var(--danger); }

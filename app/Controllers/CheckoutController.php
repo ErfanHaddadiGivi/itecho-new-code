@@ -7,7 +7,6 @@ use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\Flash;
-use App\Core\Session;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Setting;
@@ -22,7 +21,7 @@ class CheckoutController extends Controller
 {
     public function index(): void
     {
-        $this->requireLogin();
+        $this->requireLogin('برای تکمیل خرید وارد حساب کاربری خود شوید. سبد خرید شما حفظ می‌شود.');
 
         $items   = Cart::items();
         $summary = Cart::summary($items);
@@ -62,7 +61,7 @@ class CheckoutController extends Controller
      */
     public function place(): void
     {
-        $this->requireLogin();
+        $this->requireLogin('برای تکمیل خرید وارد حساب کاربری خود شوید. سبد خرید شما حفظ می‌شود.');
         Csrf::check();
 
         $items   = Cart::items();
@@ -127,17 +126,6 @@ class CheckoutController extends Controller
     }
 
     // ------------------------------------------------------------------
-
-    private function requireLogin(): void
-    {
-        if (Auth::check()) {
-            return;
-        }
-
-        Session::set('intended_url', $_SERVER['REQUEST_URI'] ?? '');
-        Flash::info('برای تکمیل خرید وارد حساب کاربری خود شوید. سبد خرید شما حفظ می‌شود.');
-        redirect('login');
-    }
 
     private function readShippingForm(): array
     {

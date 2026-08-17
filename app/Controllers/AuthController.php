@@ -285,6 +285,125 @@ class AuthController extends Controller
     }
 
     // ==================================================================
+    //  بازیابی رمز عبور
+    // ==================================================================
+
+    public function showForgot(): void
+    {
+        $this->view('site/auth/forgot', [
+            'title'  => 'بازیابی رمز عبور',
+            'errors' => Flash::errors(),
+        ], 'site');
+    }
+
+    /**
+     * ارسال کد بازیابی.
+     *
+     * ⚠️ نکته امنیتی: چه ایمیل در سیستم باشد چه نباشد، پیام یکسانی
+     * نمایش داده می‌شود تا کسی نتواند بفهمد کدام ایمیل‌ها ثبت شده‌اند.
+     */
+    public function forgot(): void
+    {
+        Csrf::check();
+
+        $email = mb_strtolower((string) $this->input('email'));
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Flash::error('ایمیل معتبر وارد کنید.');
+            redirect('forgot-password');
+        }
+
+        $user = Database::fetch('SELECT * FROM users WHERE email = ? LIMIT 1', [$email]);
+
+        if ($user !== null && $user['status'] === 'active') {
+            try {
+                $code = VerificationCode::issue($email, 'reset_password', (int) $user['id']);
+
+                Mailer::sendTemplate(
+                    $email,
+                    'کد بازیابی رمز عبور ایتکو',
+                    'reset-code',
+                    ['code' => $code, 'name' => $user['first_name']],
+                    trim($user['first_name'] . ' ' . $user['last_name'])
+                );
+            } catch (\RuntimeException $e) {
+                Flash::info($e->getMessage());
+                Session::set('reset_email', $email);
+                redirect('reset-password');
+            }
+        }
+
+        Session::set('reset_email', $email);
+        Flash::success('اگر این ایمیل در سیستم ثبت شده باشد، کد بازیابی برای آن ارسال شد.');
+        redirect('reset-password');
+    }
+
+    public function showReset(): void
+    {
+        $email = Session::get('reset_email');
+
+        if (!is_string($email) || $email === '') {
+            redirect('forgot-password');
+        }
+
+        $this->view('site/auth/reset', [
+            'title'  => 'تعیین رمز عبور جدید',
+            'email'  => $email,
+            'errors' => Flash::errors(),
+        ], 'site');
+    }
+
+    public function reset(): void
+    {
+        Csrf::check();
+
+        $email = Session::get('reset_email');
+
+        if (!is_string($email) || $email === '') {
+            redirect('forgot-password');
+        }
+
+        $password = (string) ($_POST['password'] ?? '');
+        $confirm  = (string) ($_POST['password_confirm'] ?? '');
+
+        if (mb_strlen($password) < 8) {
+            Flash::error('رمز عبور باید حداقل ۸ کاراکتر باشد.');
+            redirect('reset-password');
+        }
+
+        if ($password !== $confirm) {
+            Flash::error('تکرار رمز عبور یکسان نیست.');
+            redirect('reset-password');
+        }
+
+        try {
+            VerificationCode::check($email, 'reset_password', (string) $this->input('code'));
+        } catch (\RuntimeException $e) {
+            Flash::error($e->getMessage());
+            redirect('reset-password');
+        }
+
+        $user = Database::fetch('SELECT * FROM users WHERE email = ? LIMIT 1', [$email]);
+
+        if ($user === null) {
+            Flash::error('حساب کاربری پیدا نشد.');
+            redirect('forgot-password');
+        }
+
+        Database::update('users', [
+            'password_hash' => password_hash($password, PASSWORD_DEFAULT),
+            // اگر کاربر ایمیلش را تایید نکرده بود، این کد نشان می‌دهد ایمیل در دسترس اوست
+            'email_verified_at' => $user['email_verified_at'] ?? date('Y-m-d H:i:s'),
+        ], 'id = ?', [$user['id']]);
+
+        Session::forget('reset_email');
+        Auth::login((int) $user['id']);
+
+        Flash::success('رمز عبور شما تغییر کرد.');
+        redirect('account');
+    }
+
+    // ==================================================================
     //  شمارش تلاش ناموفق ورود
     // ==================================================================
 

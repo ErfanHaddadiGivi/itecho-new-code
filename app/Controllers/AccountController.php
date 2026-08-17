@@ -4,15 +4,19 @@ namespace App\Controllers;
 
 use App\Core\Auth;
 use App\Core\Controller;
+use App\Core\Csrf;
+use App\Core\Database;
 use App\Core\Flash;
-use App\Core\Session;
+use App\Models\Address;
 use App\Models\Order;
+use App\Models\Review;
+use App\Models\Wishlist;
 
 /**
- * حساب کاربری مشتری.
+ * حساب کاربری مشتری — پیشخوان، سفارش‌ها و ویرایش پروفایل.
  *
- * در این مرحله فقط سفارش‌ها نمایش داده می‌شوند؛ بخش‌های دیگر
- * (دفترچه آدرس، علاقه‌مندی‌ها، ویرایش پروفایل) در مرحله ۵ اضافه می‌شوند.
+ * دفترچه آدرس، علاقه‌مندی‌ها و نظرات هرکدام کنترلر جدا دارند تا
+ * این فایل کوتاه و قابل خواندن بماند.
  */
 class AccountController extends Controller
 {
@@ -20,13 +24,17 @@ class AccountController extends Controller
     {
         $this->requireLogin();
 
-        $orders = Order::forUser((int) Auth::id());
+        $userId = (int) Auth::id();
+        $orders = Order::forUser($userId);
 
         $this->view('site/account/index', [
-            'title'  => 'حساب کاربری',
-            'user'   => Auth::user(),
-            'orders' => array_slice($orders, 0, 5),
-            'total'  => count($orders),
+            'title'         => 'حساب کاربری',
+            'user'          => Auth::user(),
+            'orders'        => array_slice($orders, 0, 5),
+            'orderCount'    => count($orders),
+            'addressCount'  => Address::countFor($userId),
+            'wishlistCount' => Wishlist::countFor($userId),
+            'toReview'      => Review::awaitingReview($userId),
         ], 'site');
     }
 
@@ -61,14 +69,96 @@ class AccountController extends Controller
         ], 'site');
     }
 
-    private function requireLogin(): void
+    // ==================================================================
+    //  پروفایل
+    // ==================================================================
+
+    public function profile(): void
     {
-        if (Auth::check()) {
-            return;
+        $this->requireLogin();
+
+        $this->view('site/account/profile', [
+            'title'  => 'اطلاعات حساب',
+            'user'   => Auth::user(),
+            'errors' => Flash::errors(),
+        ], 'site');
+    }
+
+    /**
+     * ویرایش نام و شماره موبایل.
+     * ایمیل قابل تغییر نیست چون شناسه ورود و مقصد کدهای تایید است.
+     */
+    public function updateProfile(): void
+    {
+        $this->requireLogin();
+        Csrf::check();
+
+        $firstName = (string) $this->input('first_name');
+        $lastName  = (string) $this->input('last_name');
+        $phone     = en_digits((string) $this->input('phone'));
+
+        $errors = [];
+
+        if ($firstName === '') {
+            $errors['first_name'] = 'نام را وارد کنید.';
         }
 
-        Session::set('intended_url', $_SERVER['REQUEST_URI'] ?? '');
-        Flash::info('برای مشاهده این صفحه وارد حساب کاربری خود شوید.');
-        redirect('login');
+        if ($lastName === '') {
+            $errors['last_name'] = 'نام خانوادگی را وارد کنید.';
+        }
+
+        if ($phone !== '' && !preg_match('/^09\d{9}$/', $phone)) {
+            $errors['phone'] = 'شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود.';
+        }
+
+        if ($errors !== []) {
+            $this->backWithErrors($errors, 'account/profile');
+        }
+
+        Database::update('users', [
+            'first_name' => $firstName,
+            'last_name'  => $lastName,
+            'phone'      => $phone !== '' ? $phone : null,
+        ], 'id = ?', [Auth::id()]);
+
+        Flash::success('اطلاعات حساب به‌روزرسانی شد.');
+        redirect('account/profile');
+    }
+
+    /**
+     * تغییر رمز عبور — با تایید رمز فعلی
+     */
+    public function updatePassword(): void
+    {
+        $this->requireLogin();
+        Csrf::check();
+
+        $current = (string) ($_POST['current_password'] ?? '');
+        $new     = (string) ($_POST['new_password'] ?? '');
+        $confirm = (string) ($_POST['new_password_confirm'] ?? '');
+
+        $user   = Auth::user();
+        $errors = [];
+
+        if (!password_verify($current, $user['password_hash'])) {
+            $errors['current_password'] = 'رمز عبور فعلی درست نیست.';
+        }
+
+        if (mb_strlen($new) < 8) {
+            $errors['new_password'] = 'رمز عبور جدید باید حداقل ۸ کاراکتر باشد.';
+        } elseif ($new !== $confirm) {
+            $errors['new_password_confirm'] = 'تکرار رمز عبور یکسان نیست.';
+        }
+
+        if ($errors !== []) {
+            $this->backWithErrors($errors, 'account/profile');
+        }
+
+        Database::update('users', [
+            'password_hash' => password_hash($new, PASSWORD_DEFAULT),
+        ], 'id = ?', [$user['id']]);
+
+        Flash::success('رمز عبور تغییر کرد.');
+        redirect('account/profile');
     }
 }

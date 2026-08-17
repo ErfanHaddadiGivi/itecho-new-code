@@ -25,9 +25,12 @@ $statusLabels = [
 <!-- کارهایی که منتظر رسیدگی هستند -->
 <?php
 $todoItems = [
-    ['count' => $todo['new_orders'],             'label' => 'سفارش پرداخت‌شده در انتظار آماده‌سازی'],
-    ['count' => $todo['awaiting_shipping_cost'], 'label' => 'سفارش در انتظار محاسبه هزینه ارسال'],
-    ['count' => $todo['pending_reviews'],        'label' => 'نظر در انتظار تایید'],
+    ['count' => $todo['new_orders'],             'label' => 'سفارش پرداخت‌شده در انتظار آماده‌سازی',
+     'url' => 'admin/orders?status=paid'],
+    ['count' => $todo['awaiting_shipping_cost'], 'label' => 'سفارش در انتظار محاسبه هزینه ارسال',
+     'url' => 'admin/orders?shipping_state=awaiting_cost'],
+    ['count' => $todo['pending_reviews'],        'label' => 'نظر در انتظار تایید',
+     'url' => 'admin/reviews?status=pending'],
     ['count' => $todo['unread_messages'],        'label' => 'پیام خوانده‌نشده'],
 ];
 $pending = array_filter($todoItems, static fn ($item) => $item['count'] > 0);
@@ -40,7 +43,11 @@ $pending = array_filter($todoItems, static fn ($item) => $item['count'] > 0);
             <?php foreach ($pending as $item): ?>
                 <li>
                     <span class="todo-list__count"><?= e(fa_digits((string) $item['count'])) ?></span>
-                    <span><?= e($item['label']) ?></span>
+                    <?php if (!empty($item['url'])): ?>
+                        <a href="<?= e(url($item['url'])) ?>"><?= e($item['label']) ?></a>
+                    <?php else: ?>
+                        <span><?= e($item['label']) ?></span>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
         </ul>

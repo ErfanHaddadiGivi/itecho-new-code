@@ -37,9 +37,36 @@ $router->post('/verify',    'AuthController@verify');
 $router->post('/verify/resend', 'AuthController@resend');
 $router->post('/logout',    'AuthController@logout');
 
-$router->get('/account',        'AccountController@index');
-$router->get('/account/orders', 'AccountController@orders');
-$router->get('/order/{id}',     'AccountController@order');
+$router->get('/forgot-password',  'AuthController@showForgot');
+$router->post('/forgot-password', 'AuthController@forgot');
+$router->get('/reset-password',   'AuthController@showReset');
+$router->post('/reset-password',  'AuthController@reset');
+
+// --- پیشخوان حساب کاربری ---
+$router->get('/account',                 'AccountController@index');
+$router->get('/account/orders',          'AccountController@orders');
+$router->get('/order/{id}',              'AccountController@order');
+$router->get('/account/profile',         'AccountController@profile');
+$router->post('/account/profile',        'AccountController@updateProfile');
+$router->post('/account/password',       'AccountController@updatePassword');
+
+// --- دفترچه آدرس ---
+$router->get('/account/addresses',                'AddressController@index');
+$router->get('/account/addresses/create',         'AddressController@create');
+$router->post('/account/addresses',               'AddressController@store');
+$router->get('/account/addresses/{id}/edit',      'AddressController@edit');
+$router->post('/account/addresses/{id}',          'AddressController@update');
+$router->post('/account/addresses/{id}/default',  'AddressController@setDefault');
+$router->post('/account/addresses/{id}/delete',   'AddressController@destroy');
+
+// --- علاقه‌مندی‌ها ---
+$router->get('/account/wishlist',   'WishlistController@index');
+$router->post('/wishlist/toggle',   'WishlistController@toggle');
+$router->post('/wishlist/remove',   'WishlistController@remove');
+
+// --- نظرات ---
+$router->get('/account/reviews', 'ReviewController@mine');
+$router->post('/review',         'ReviewController@store');
 
 // --- تسویه‌حساب ---
 $router->get('/checkout',  'CheckoutController@index');
@@ -99,6 +126,11 @@ $router->post('/admin/brands',            'Admin\BrandController@store');
 $router->get('/admin/brands/{id}/edit',   'Admin\BrandController@edit');
 $router->post('/admin/brands/{id}',       'Admin\BrandController@update');
 $router->post('/admin/brands/{id}/delete','Admin\BrandController@destroy');
+
+// --- نظرات ---
+$router->get('/admin/reviews',                'Admin\ReviewController@index');
+$router->post('/admin/reviews/{id}/status',   'Admin\ReviewController@updateStatus');
+$router->post('/admin/reviews/{id}/delete',   'Admin\ReviewController@destroy');
 
 // --- تنظیمات ---
 $router->get('/admin/settings',  'Admin\SettingController@index');

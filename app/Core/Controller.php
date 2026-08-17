@@ -72,6 +72,23 @@ abstract class Controller
     }
 
     /**
+     * محافظت از صفحه‌هایی که نیاز به حساب کاربری دارند.
+     *
+     * آدرس صفحه فعلی نگه داشته می‌شود تا کاربر بعد از ورود به همان‌جا برگردد.
+     */
+    protected function requireLogin(
+        string $message = 'برای مشاهده این صفحه وارد حساب کاربری خود شوید.'
+    ): void {
+        if (Auth::check()) {
+            return;
+        }
+
+        Session::set('intended_url', $_SERVER['REQUEST_URI'] ?? '');
+        Flash::info($message);
+        redirect('login');
+    }
+
+    /**
      * نمایش صفحه ۴۰۴ از داخل کنترلر
      */
     protected function notFound(string $message = 'صفحه مورد نظر پیدا نشد'): never

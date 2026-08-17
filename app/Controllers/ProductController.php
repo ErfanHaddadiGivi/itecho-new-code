@@ -2,9 +2,12 @@
 
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Database;
 use App\Models\Product;
+use App\Models\Review;
+use App\Models\Wishlist;
 
 /**
  * صفحه جزئیات محصول.
@@ -24,23 +27,23 @@ class ProductController extends Controller
         // شمارنده بازدید — خطای آن نباید صفحه را خراب کند
         Database::run('UPDATE products SET views = views + 1 WHERE id = ?', [$productId]);
 
-        // نظرات تاییدشده
-        $reviews = Database::fetchAll(
-            "SELECT r.rating, r.title, r.comment, r.is_verified_buyer, r.admin_reply, r.created_at,
-                    u.first_name, u.last_name
-               FROM reviews r
-               JOIN users u ON u.id = r.user_id
-              WHERE r.product_id = ? AND r.status = 'approved'
-              ORDER BY r.created_at DESC
-              LIMIT 20",
-            [$productId]
-        );
+        $userId = Auth::id();
+
+        // آیا این کاربر می‌تواند نظر ثبت کند؟
+        // شرط: خرید کرده باشد و قبلاً نظری ثبت نکرده باشد.
+        $myReview  = $userId !== null ? Review::byUserForProduct($userId, $productId) : null;
+        $canReview = $userId !== null
+                  && $myReview === null
+                  && Review::purchasedOrderId($userId, $productId) !== null;
 
         $this->view('site/product', [
-            'title'    => $product['name'] . ' | ایتکو',
-            'product'  => $product,
-            'reviews'  => $reviews,
-            'related'  => Product::related($productId, $product['category_id'] !== null
+            'title'      => $product['name'] . ' | ایتکو',
+            'product'    => $product,
+            'reviews'    => Review::approvedForProduct($productId),
+            'myReview'   => $myReview,
+            'canReview'  => $canReview,
+            'inWishlist' => $userId !== null && Wishlist::has($userId, $productId),
+            'related'    => Product::related($productId, $product['category_id'] !== null
                             ? (int) $product['category_id'] : null),
             'variantMap' => $this->buildVariantMap($product['variants']),
             'scripts'    => ['product.js'],

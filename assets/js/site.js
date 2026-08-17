@@ -207,6 +207,41 @@
         });
     }
 
+    // ---------------------------------------------------------------
+    // علاقه‌مندی: افزودن/حذف بدون بارگذاری دوباره صفحه
+    // ---------------------------------------------------------------
+    document.querySelectorAll('.wish-form').forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var button = form.querySelector('button');
+            button.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    // کاربر مهمان است → به صفحه ورود می‌رود
+                    if (data.needLogin) {
+                        window.location.href = data.loginUrl;
+                        return;
+                    }
+
+                    button.classList.toggle('is-on', data.added);
+                    button.setAttribute('aria-pressed', data.added ? 'true' : 'false');
+                    button.setAttribute('aria-label',
+                        data.added ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها');
+
+                    showToast(data.message, 'success');
+                })
+                .catch(function () { form.submit(); })
+                .finally(function () { button.disabled = false; });
+        });
+    });
+
     function toFa(text) {
         var fa = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
         return text.replace(/\d/g, function (d) { return fa[d]; });
