@@ -16,6 +16,19 @@ SET FOREIGN_KEY_CHECKS = 0;
 SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 
 
+-- ---------------------------------------------------------------------
+--  پاک‌سازی جدول‌های قبلی (برای Import دوباره روی نصب ناقص).
+--  اگر دیتابیس خالی است این خط‌ها بی‌اثرند. با FOREIGN_KEY_CHECKS=0 بالا،
+--  ترتیب حذف اهمیتی ندارد.
+--  ⚠️ این کار داده‌های جدول‌های زیر را پاک می‌کند؛ روی نصب تازه بی‌خطر است.
+-- ---------------------------------------------------------------------
+DROP TABLE IF EXISTS reviews, inventory_logs, payments, order_status_history,
+  order_items, orders, wishlist_items, cart_items, carts,
+  variant_attribute_values, product_variants, product_attributes, product_specs,
+  product_images, products, attribute_values, attributes, brands, categories,
+  verification_codes, user_addresses, users, banners, contact_messages, pages, settings;
+
+
 -- =====================================================================
 --  بخش ۱ — تنظیمات و محتوای ثابت سایت
 -- =====================================================================
@@ -390,18 +403,26 @@ CREATE TABLE carts (
 
 -- اقلام سبد خرید. قیمت اینجا ذخیره نمی‌شود و همیشه لحظه‌ای از محصول/Variant خوانده
 -- می‌شود تا مشتری قیمت قدیمی نبیند.
+-- نکته درباره جلوگیری از ردیف تکراری:
+-- در ایندکس یکتای MySQL، مقدار NULL با NULL برابر شمرده نمی‌شود؛ پس این ایندکس
+-- فقط از ثبت دوباره یک «ترکیب مشخص» (variant_id غیر‌NULL) جلوگیری می‌کند.
+-- برای محصول بدون Variant (variant_id = NULL) جلوگیری از تکرار در خود کد انجام
+-- می‌شود: متد Cart::add پیش از درج، با شرط «variant_id IS NULL» ردیف موجود را
+-- پیدا و فقط تعدادش را زیاد می‌کند (این رفتار در تست‌ها بررسی شده است).
+--
+-- توجه: در نسخه قبلی برای این کار یک ستون محاسباتی STORED استفاده شده بود، اما
+-- چون آن ستون از روی variant_id (که کلید خارجی با ON DELETE CASCADE دارد) محاسبه
+-- می‌شد، برخی نسخه‌های MySQL آن را با خطای «Cannot add foreign key constraint»
+-- (کد 1215) رد می‌کردند. حذف آن ستون، این ساختار را روی همه سرورها سازگار می‌کند.
 CREATE TABLE cart_items (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
   cart_id    INT UNSIGNED NOT NULL,
   product_id INT UNSIGNED NOT NULL,
   variant_id INT UNSIGNED DEFAULT NULL COMMENT 'NULL یعنی محصول Variant ندارد',
-  -- ستون کمکی: در ایندکس یکتا مقدار NULL با NULL برابر شمرده نمی‌شود، پس بدون این ستون
-  -- یک محصول بدون Variant می‌توانست دو بار به صورت دو ردیف جدا وارد سبد شود.
-  variant_ref INT UNSIGNED AS (IFNULL(variant_id, 0)) STORED,
   quantity   SMALLINT UNSIGNED NOT NULL DEFAULT 1,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (id),
-  UNIQUE KEY uq_cart_line (cart_id, product_id, variant_ref),
+  UNIQUE KEY uq_cart_line (cart_id, product_id, variant_id),
   KEY idx_cart_items_product (product_id),
   CONSTRAINT fk_cart_items_cart    FOREIGN KEY (cart_id)    REFERENCES carts (id)            ON DELETE CASCADE,
   CONSTRAINT fk_cart_items_product FOREIGN KEY (product_id) REFERENCES products (id)         ON DELETE CASCADE,
