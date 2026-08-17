@@ -27,6 +27,32 @@ $router->post('/cart/add',    'CartController@add');
 $router->post('/cart/update', 'CartController@update');
 $router->post('/cart/remove', 'CartController@remove');
 
+// --- حساب کاربری مشتری ---
+$router->get('/login',      'AuthController@showLogin');
+$router->post('/login',     'AuthController@login');
+$router->get('/register',   'AuthController@showRegister');
+$router->post('/register',  'AuthController@register');
+$router->get('/verify',     'AuthController@showVerify');
+$router->post('/verify',    'AuthController@verify');
+$router->post('/verify/resend', 'AuthController@resend');
+$router->post('/logout',    'AuthController@logout');
+
+$router->get('/account',        'AccountController@index');
+$router->get('/account/orders', 'AccountController@orders');
+$router->get('/order/{id}',     'AccountController@order');
+
+// --- تسویه‌حساب ---
+$router->get('/checkout',  'CheckoutController@index');
+$router->post('/checkout', 'CheckoutController@place');
+
+// --- پرداخت ---
+$router->get('/payment/start/{id}', 'PaymentController@start');
+$router->get('/payment/callback',   'PaymentController@callback');
+$router->post('/payment/callback',  'PaymentController@callback');
+// لینک پرداخت تکمیلی هزینه ارسال که برای مشتری ایمیل می‌شود
+$router->get('/pay/{token}',       'PaymentController@showToken');
+$router->post('/pay/{token}/start', 'PaymentController@startToken');
+
 // صفحات ثابت اینماد: قوانین، حریم خصوصی، درباره ما، تماس با ما
 $router->get('/page/{slug}', 'PageController@show');
 
@@ -50,6 +76,13 @@ $router->post('/admin/categories',            'Admin\CategoryController@store');
 $router->get('/admin/categories/{id}/edit',   'Admin\CategoryController@edit');
 $router->post('/admin/categories/{id}',       'Admin\CategoryController@update');
 $router->post('/admin/categories/{id}/delete','Admin\CategoryController@destroy');
+
+// --- سفارش‌ها ---
+$router->get('/admin/orders',                  'Admin\OrderController@index');
+$router->get('/admin/orders/{id}',             'Admin\OrderController@show');
+$router->post('/admin/orders/{id}/status',     'Admin\OrderController@updateStatus');
+$router->post('/admin/orders/{id}/details',    'Admin\OrderController@updateDetails');
+$router->post('/admin/orders/{id}/shipping',   'Admin\OrderController@setShippingCost');
 
 // --- محصولات ---
 $router->get('/admin/products',             'Admin\ProductController@index');

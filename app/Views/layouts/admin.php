@@ -53,13 +53,13 @@ $isActive = static function (string $segment) use ($path): string {
             <a class="admin-nav__link<?= $isActive('admin') ?>" href="<?= e(url('admin')) ?>">داشبورد</a>
             <a class="admin-nav__link<?= $isActive('products') ?>" href="<?= e(url('admin/products')) ?>">محصولات</a>
             <a class="admin-nav__link<?= $isActive('categories') ?>" href="<?= e(url('admin/categories')) ?>">دسته‌بندی‌ها</a>
+            <a class="admin-nav__link<?= $isActive('orders') ?>" href="<?= e(url('admin/orders')) ?>">سفارش‌ها</a>
             <a class="admin-nav__link<?= $isActive('brands') ?>" href="<?= e(url('admin/brands')) ?>">برندها</a>
 
             <span class="admin-nav__label">پیکربندی</span>
             <a class="admin-nav__link<?= $isActive('settings') ?>" href="<?= e(url('admin/settings')) ?>">تنظیمات</a>
 
             <span class="admin-nav__label">به‌زودی</span>
-            <span class="admin-nav__link is-disabled">سفارش‌ها</span>
             <span class="admin-nav__link is-disabled">نظرات</span>
         </nav>
 

@@ -67,7 +67,8 @@ $siteName = Setting::get('site_name', 'ایتکو');
         </form>
 
         <div class="header-actions">
-            <a class="icon-btn" href="<?= e(url('account')) ?>" aria-label="حساب کاربری">
+            <a class="icon-btn" href="<?= e(url(Auth::check() ? 'account' : 'login')) ?>"
+               aria-label="<?= Auth::check() ? 'حساب کاربری' : 'ورود' ?>">
                 <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
                     <circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/>
                     <path d="M4.5 20c1.2-3.8 4-5.6 7.5-5.6s6.3 1.8 7.5 5.6" fill="none"

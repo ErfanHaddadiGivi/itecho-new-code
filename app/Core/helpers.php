@@ -184,10 +184,20 @@ if (!function_exists('jdate')) {
         $months = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور',
                    'مهر','آبان','آذر','دی','بهمن','اسفند'];
 
+        $monthName = $months[$jm - 1];
+
+        /**
+         * ⚠️ نکته مهم فارسی‌نویسی در PHP:
+         * داخل رشته دو‌نقل‌قولی، متغیر را حتماً با آکولاد بنویسید یا از
+         * چسباندن رشته‌ها استفاده کنید. PHP همه بایت‌های بالای 0x80 را بخشی از
+         * نام متغیر می‌داند، بنابراین در "$jy، " کاراکتر «،» به نام متغیر
+         * چسبیده و متغیر ناشناخته $jy، ساخته می‌شود.
+         * برای همین اینجا از چسباندن رشته استفاده شده است.
+         */
         return match ($format) {
             'short'    => fa_digits(sprintf('%04d/%02d/%02d', $jy, $jm, $jd)),
-            'datetime' => fa_digits("$jd " . $months[$jm - 1] . " $jy، " . date('H:i', $timestamp)),
-            default    => fa_digits("$jd " . $months[$jm - 1] . " $jy"),
+            'datetime' => fa_digits($jd . ' ' . $monthName . ' ' . $jy . '، ' . date('H:i', $timestamp)),
+            default    => fa_digits($jd . ' ' . $monthName . ' ' . $jy),
         };
     }
 }

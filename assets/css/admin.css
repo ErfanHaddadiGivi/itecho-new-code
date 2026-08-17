@@ -254,3 +254,26 @@ body.centered-page {
     border: 1px dashed var(--line); border-radius: var(--radius-sm);
     background: var(--bg); width: 100%; cursor: pointer;
 }
+
+/* =====================================================================
+   مرحله ۴ — سفارش‌ها در پنل
+   ===================================================================== */
+.admin-order-title { font-size: 19px; margin: 0 0 3px; }
+.admin-order-title .ltr { font-family: var(--font-mono); font-size: .9em; }
+
+.order-totals {
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line-soft);
+    display: flex; flex-direction: column; gap: 7px; font-size: 14px;
+    max-width: 340px; margin-inline-start: auto;
+}
+.order-totals > div { display: flex; justify-content: space-between; gap: 14px; }
+.order-totals__grand {
+    border-top: 1px solid var(--line); padding-top: 9px; font-weight: 700; font-size: 15px;
+}
+
+.order-note {
+    background: var(--bg); border-radius: var(--radius-sm);
+    padding: 9px 12px; font-size: 12.5px; color: var(--muted); margin: 0 0 12px;
+}
+
+.payment-row { align-items: flex-start !important; }
