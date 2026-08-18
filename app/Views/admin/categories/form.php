@@ -23,7 +23,7 @@ $value = static function (string $field, mixed $fallback = '') use ($category) {
 ?>
 
 <div class="panel panel--form">
-    <form action="<?= e($action) ?>" method="post" class="form">
+    <form action="<?= e($action) ?>" method="post" enctype="multipart/form-data" class="form">
         <?= Csrf::field() ?>
 
         <div class="field">
@@ -62,6 +62,25 @@ $value = static function (string $field, mixed $fallback = '') use ($category) {
         <div class="field">
             <label for="description">توضیح کوتاه</label>
             <textarea id="description" name="description" rows="3"><?= e((string) $value('description')) ?></textarea>
+        </div>
+
+        <div class="field">
+            <label>تصویر پس‌زمینه (فقط برای دسته‌های اصلی در صفحه اول)</label>
+            <?php if ($isEdit && !empty($category['image'])): ?>
+                <div class="brand-upload__preview brand-upload__preview--banner">
+                    <img src="<?= e(url('uploads/categories/' . $category['image'])) ?>" alt="تصویر فعلی">
+                </div>
+                <label class="brand-upload__remove">
+                    <input type="checkbox" name="remove_image" value="1"> حذف تصویر
+                </label>
+            <?php endif; ?>
+            <input type="file" name="image" accept="image/png,image/jpeg,image/webp">
+            <span class="field__hint">
+                این تصویر پشت کارت دسته در صفحه اصلی نمایش داده می‌شود. اندازه پیشنهادی حدود ۶۰۰×۴۰۰ پیکسل.
+            </span>
+            <?php if (isset($errors['image'])): ?>
+                <span class="field__error"><?= e($errors['image']) ?></span>
+            <?php endif; ?>
         </div>
 
         <div class="field field--narrow">

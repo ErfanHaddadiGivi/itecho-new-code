@@ -112,6 +112,76 @@
 }
 .category-card:hover { border-color: var(--brand); color: var(--brand); text-decoration: none; }
 
+/* دسته با تصویر پس‌زمینه (از پنل مدیریت آپلود می‌شود) */
+.category-card--bg {
+    position: relative; overflow: hidden; min-height: 116px;
+    background-size: cover; background-position: center;
+    color: #fff; border-color: transparent;
+}
+.category-card--bg::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(22, 33, 28, .18) 0%, rgba(22, 33, 28, .68) 100%);
+    transition: background .16s ease;
+}
+.category-card--bg .category-card__name {
+    position: relative; z-index: 1;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .45);
+}
+.category-card--bg:hover { color: #fff; border-color: transparent; }
+.category-card--bg:hover::before {
+    background: linear-gradient(180deg, rgba(11, 110, 79, .35) 0%, rgba(11, 110, 79, .78) 100%);
+}
+
+/* ---------------------------------------------------------------------
+   اسلایدر صفحه اصلی
+   --------------------------------------------------------------------- */
+.hero-slider {
+    position: relative; margin: 16px 0 4px;
+    border-radius: var(--radius); overflow: hidden;
+    background: var(--line-soft);
+}
+.hero-slider__track {
+    display: flex;
+    transition: transform .45s ease;
+    will-change: transform;
+}
+.hero-slide {
+    position: relative; flex: 0 0 100%; width: 100%;
+    display: block; color: inherit;
+}
+.hero-slide img {
+    width: 100%; height: auto; display: block;
+    aspect-ratio: 3 / 1; object-fit: cover;
+}
+.hero-slide:hover { text-decoration: none; }
+
+/* بدون جاوااسکریپت: اسلایدها زیر هم می‌مانند و ترنسفورم اثری ندارد */
+.hero-slider:not([data-slider-ready]) .hero-slider__track { flex-direction: column; }
+
+.hero-slider__nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 40px; height: 40px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: rgba(255, 255, 255, .85); color: var(--ink);
+    font-size: 24px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); transition: background .15s ease;
+}
+.hero-slider__nav:hover { background: #fff; }
+.hero-slider__nav--prev { right: 12px; }
+.hero-slider__nav--next { left: 12px; }
+
+.hero-slider__dots {
+    position: absolute; bottom: 12px; inset-inline: 0;
+    display: flex; justify-content: center; gap: 7px;
+}
+.hero-slider__dot {
+    width: 9px; height: 9px; padding: 0; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: rgba(255, 255, 255, .55); transition: background .15s ease, width .15s ease;
+}
+.hero-slider__dot.is-active { background: #fff; width: 22px; border-radius: 5px; }
+
 /* ---------------------------------------------------------------------
    کارت محصول
    --------------------------------------------------------------------- */

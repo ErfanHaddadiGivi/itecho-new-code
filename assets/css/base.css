@@ -261,6 +261,9 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 .logo__mark--lg { width: 48px; height: 48px; font-size: 18px; border-radius: 12px; }
 .logo__text { font-weight: 800; font-size: 17px; }
+/* لوگوی تصویری آپلودشده از پنل مدیریت */
+.logo__img { height: 38px; width: auto; max-width: 170px; object-fit: contain; display: block; }
+.logo--footer .logo__img { height: 34px; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }

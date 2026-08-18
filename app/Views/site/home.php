@@ -10,15 +10,22 @@
  */
 ?>
 
-<section class="hero">
-    <div class="container hero__inner">
-        <div class="hero__text">
-            <h1>تکنولوژی، با خیال راحت</h1>
-            <p>موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ — با ضمانت اصالت کالا و ارسال به سراسر ایران.</p>
-            <a class="btn btn--primary btn--lg" href="#categories">شروع خرید</a>
-        </div>
+<?php if (!empty($banners)): ?>
+    <!-- اسلایدر مدیریت‌شده از پنل؛ اگر اسلایدی نباشد بخش ثابت زیر نمایش داده می‌شود -->
+    <div class="container">
+        <?php App\Core\View::partial('site/partials/hero-slider', ['banners' => $banners]); ?>
     </div>
-</section>
+<?php else: ?>
+    <section class="hero">
+        <div class="container hero__inner">
+            <div class="hero__text">
+                <h1>تکنولوژی، با خیال راحت</h1>
+                <p>موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ — با ضمانت اصالت کالا و ارسال به سراسر ایران.</p>
+                <a class="btn btn--primary btn--lg" href="#categories">شروع خرید</a>
+            </div>
+        </div>
+    </section>
+<?php endif; ?>
 
 <!-- دسته‌بندی‌های اصلی -->
 <section class="section" id="categories">
@@ -32,7 +39,10 @@
         <?php else: ?>
             <div class="category-grid">
                 <?php foreach ($categories as $category): ?>
-                    <a class="category-card" href="<?= e(url('category/' . $category['slug'])) ?>">
+                    <?php $hasBg = !empty($category['image']); ?>
+                    <a class="category-card<?= $hasBg ? ' category-card--bg' : '' ?>"
+                       href="<?= e(url('category/' . $category['slug'])) ?>"
+                       <?= $hasBg ? 'style="background-image:url(' . e(url('uploads/categories/' . $category['image'])) . ')"' : '' ?>>
                         <span class="category-card__name"><?= e($category['name']) ?></span>
                     </a>
                 <?php endforeach; ?>

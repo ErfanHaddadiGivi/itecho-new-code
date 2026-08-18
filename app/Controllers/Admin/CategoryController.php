@@ -6,6 +6,7 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Flash;
+use App\Core\Upload;
 use App\Models\Category;
 
 /**
@@ -51,6 +52,15 @@ class CategoryController extends Controller
         }
 
         $data['slug'] = Category::uniqueSlug($data['slug'] !== '' ? $data['slug'] : $data['name']);
+
+        try {
+            $image = Upload::image($_FILES['image'] ?? [], 'categories');
+        } catch (\RuntimeException $e) {
+            $this->backWithErrors(['image' => $e->getMessage()], 'admin/categories/create');
+        }
+        if ($image !== null) {
+            $data['image'] = $image;
+        }
 
         Category::create($data);
 
@@ -99,7 +109,25 @@ class CategoryController extends Controller
             $categoryId
         );
 
+        // تصویر پس‌زمینه: آپلود جدید جایگزین می‌شود، یا با تیک حذف می‌شود
+        try {
+            $newImage = Upload::image($_FILES['image'] ?? [], 'categories');
+        } catch (\RuntimeException $e) {
+            $this->backWithErrors(['image' => $e->getMessage()], 'admin/categories/' . $categoryId . '/edit');
+        }
+
+        if ($newImage !== null) {
+            $data['image'] = $newImage;
+        } elseif (!empty($_POST['remove_image'])) {
+            $data['image'] = null;
+        }
+
         Category::updateById($categoryId, $data);
+
+        // تصویر قدیمی که جایگزین یا حذف شد از دیسک پاک می‌شود
+        if (($newImage !== null || !empty($_POST['remove_image'])) && !empty($category['image'])) {
+            Upload::delete($category['image'], 'categories');
+        }
 
         Flash::success('تغییرات ذخیره شد.');
         redirect('admin/categories');

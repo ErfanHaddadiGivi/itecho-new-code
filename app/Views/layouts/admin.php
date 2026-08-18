@@ -57,6 +57,10 @@ $isActive = static function (string $segment) use ($path): string {
             <a class="admin-nav__link<?= $isActive('brands') ?>" href="<?= e(url('admin/brands')) ?>">برندها</a>
             <a class="admin-nav__link<?= $isActive('reviews') ?>" href="<?= e(url('admin/reviews')) ?>">نظرات</a>
 
+            <span class="admin-nav__label">شخصی‌سازی ظاهر</span>
+            <a class="admin-nav__link<?= $isActive('appearance') ?>" href="<?= e(url('admin/appearance')) ?>">رنگ، لوگو و نام</a>
+            <a class="admin-nav__link<?= $isActive('banners') ?>" href="<?= e(url('admin/banners')) ?>">اسلایدر صفحه اصلی</a>
+
             <span class="admin-nav__label">پیکربندی</span>
             <a class="admin-nav__link<?= $isActive('settings') ?>" href="<?= e(url('admin/settings')) ?>">تنظیمات</a>
 

@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Core\Database;
+use App\Models\Banner;
 use App\Models\Category;
 
 /**
@@ -31,12 +32,7 @@ class HomeController extends Controller
               LIMIT 8'
         );
 
-        $banners = Database::fetchAll(
-            "SELECT * FROM banners
-              WHERE is_active = 1 AND position = 'slider'
-              ORDER BY sort_order
-              LIMIT 5"
-        );
+        $banners = Banner::activeSlides();
 
         $this->view('site/home', [
             'title'      => 'ایتکو | فروشگاه موبایل، کامپیوتر و گیمینگ',
@@ -44,6 +40,8 @@ class HomeController extends Controller
             'featured'   => $featured,
             'newest'     => $newest,
             'banners'    => $banners,
+            // اسکریپت اسلایدر فقط در صفحه اصلی بارگذاری می‌شود
+            'scripts'    => $banners ? ['slider.js'] : [],
         ], 'site');
     }
 }

@@ -132,6 +132,18 @@ $router->get('/admin/reviews',                'Admin\ReviewController@index');
 $router->post('/admin/reviews/{id}/status',   'Admin\ReviewController@updateStatus');
 $router->post('/admin/reviews/{id}/delete',   'Admin\ReviewController@destroy');
 
+// --- شخصی‌سازی ظاهر: رنگ و تم، لوگو و نام ---
+$router->get('/admin/appearance',  'Admin\AppearanceController@index');
+$router->post('/admin/appearance', 'Admin\AppearanceController@update');
+
+// --- اسلایدر صفحه اصلی ---
+$router->get('/admin/banners',             'Admin\BannerController@index');
+$router->get('/admin/banners/create',      'Admin\BannerController@create');
+$router->post('/admin/banners',            'Admin\BannerController@store');
+$router->get('/admin/banners/{id}/edit',   'Admin\BannerController@edit');
+$router->post('/admin/banners/{id}',       'Admin\BannerController@update');
+$router->post('/admin/banners/{id}/delete','Admin\BannerController@destroy');
+
 // --- تنظیمات ---
 $router->get('/admin/settings',  'Admin\SettingController@index');
 $router->post('/admin/settings', 'Admin\SettingController@update');

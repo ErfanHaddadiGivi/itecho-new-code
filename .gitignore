@@ -8,6 +8,15 @@ uploads/*
 !uploads/products/
 uploads/products/*
 !uploads/products/.gitkeep
+!uploads/branding/
+uploads/branding/*
+!uploads/branding/.gitkeep
+!uploads/banners/
+uploads/banners/*
+!uploads/banners/.gitkeep
+!uploads/categories/
+uploads/categories/*
+!uploads/categories/.gitkeep
 
 # لاگ‌ها — خود پوشه بماند تا PHP بتواند در آن بنویسد
 logs/*

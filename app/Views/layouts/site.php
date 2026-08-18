@@ -8,12 +8,16 @@
 
 use App\Core\Auth;
 use App\Core\Flash;
+use App\Core\Theme;
 use App\Models\Category;
 use App\Models\Setting;
 
-$menu     = Category::menuTree();
-$messages = Flash::pull();
-$siteName = Setting::get('site_name', 'ایتکو');
+$menu       = Category::menuTree();
+$messages   = Flash::pull();
+$siteName   = Setting::get('site_name', 'ایتکو');
+$siteLogo   = Setting::get('site_logo', '');
+$favicon    = Setting::get('site_favicon', '');
+$themeStyle = Theme::inlineStyle();
 ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -22,10 +26,18 @@ $siteName = Setting::get('site_name', 'ایتکو');
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="<?= e(Setting::get('site_description', '')) ?>">
     <title><?= e($title ?? $siteName) ?></title>
-    <link rel="icon" type="image/svg+xml" href="<?= e(asset('img/favicon.svg')) ?>">
+    <?php if ($favicon): ?>
+        <link rel="icon" href="<?= e(url('uploads/branding/' . $favicon)) ?>">
+    <?php else: ?>
+        <link rel="icon" type="image/svg+xml" href="<?= e(asset('img/favicon.svg')) ?>">
+    <?php endif; ?>
     <link rel="preload" href="<?= e(url('assets/fonts/Vazirmatn-Variable.woff2')) ?>" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= e(asset('css/base.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('css/site.css')) ?>">
+    <?php if ($themeStyle !== ''): ?>
+        <!-- رنگ‌های سفارشی از پنل مدیریت -->
+        <style><?= $themeStyle ?></style>
+    <?php endif; ?>
 </head>
 <body>
 
@@ -51,8 +63,12 @@ $siteName = Setting::get('site_name', 'ایتکو');
         </button>
 
         <a class="logo" href="<?= e(url('')) ?>">
-            <span class="logo__mark">IT</span>
-            <span class="logo__text"><?= e($siteName) ?></span>
+            <?php if ($siteLogo): ?>
+                <img class="logo__img" src="<?= e(url('uploads/branding/' . $siteLogo)) ?>" alt="<?= e($siteName) ?>">
+            <?php else: ?>
+                <span class="logo__mark">IT</span>
+                <span class="logo__text"><?= e($siteName) ?></span>
+            <?php endif; ?>
         </a>
 
         <form class="search" action="<?= e(url('search')) ?>" method="get" role="search">
@@ -134,8 +150,12 @@ $siteName = Setting::get('site_name', 'ایتکو');
     <div class="container site-footer__grid">
         <div>
             <div class="logo logo--footer">
-                <span class="logo__mark">IT</span>
-                <span class="logo__text"><?= e($siteName) ?></span>
+                <?php if ($siteLogo): ?>
+                    <img class="logo__img" src="<?= e(url('uploads/branding/' . $siteLogo)) ?>" alt="<?= e($siteName) ?>">
+                <?php else: ?>
+                    <span class="logo__mark">IT</span>
+                    <span class="logo__text"><?= e($siteName) ?></span>
+                <?php endif; ?>
             </div>
             <p class="site-footer__about">
                 فروشگاه اینترنتی موبایل، کامپیوتر، کنسول بازی، تجهیزات گیمینگ و لوازم جانبی.
