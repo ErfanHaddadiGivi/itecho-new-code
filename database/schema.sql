@@ -26,7 +26,8 @@ DROP TABLE IF EXISTS reviews, inventory_logs, payments, order_status_history,
   order_items, orders, wishlist_items, cart_items, carts,
   variant_attribute_values, product_variants, product_attributes, product_specs,
   product_images, products, attribute_values, attributes, brands, categories,
-  verification_codes, user_addresses, users, banners, contact_messages, pages, settings;
+  verification_codes, user_addresses, users, banners, contact_messages, pages,
+  sync_logs, settings;
 
 
 -- =====================================================================
@@ -633,6 +634,28 @@ CREATE TABLE reviews (
   CONSTRAINT fk_reviews_order   FOREIGN KEY (order_id)   REFERENCES orders (id)   ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='نظرات و امتیاز محصولات';
+
+
+-- =====================================================================
+--  بخش ۹ — گزارش همگام‌سازی (Sync log)
+--  Report of each Google Sheet product-sync run. English on purpose so it
+--  matches the sync feature code. Not linked by a foreign key: it is a plain
+--  append-only audit log, one row per run.
+-- =====================================================================
+CREATE TABLE sync_logs (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  source        VARCHAR(40) NOT NULL DEFAULT 'google_sheet' COMMENT 'where the batch came from',
+  received      INT NOT NULL DEFAULT 0 COMMENT 'rows received in the payload',
+  inserted      INT NOT NULL DEFAULT 0,
+  updated       INT NOT NULL DEFAULT 0,
+  deactivated   INT NOT NULL DEFAULT 0,
+  rejected      INT NOT NULL DEFAULT 0,
+  rejected_rows TEXT DEFAULT NULL COMMENT 'JSON array of {sku, reason} for rejected rows',
+  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_sync_logs_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='Google Sheet product-sync run reports';
 
 
 SET FOREIGN_KEY_CHECKS = 1;
