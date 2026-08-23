@@ -24,18 +24,39 @@ class SyncLog extends Model
      */
     public static function record(string $source, int $received, array $summary, array $rejected): int
     {
-        return Database::insert('sync_logs', [
-            'source'        => $source,
-            'received'      => $received,
-            'inserted'      => (int) ($summary['inserted'] ?? 0),
-            'updated'       => (int) ($summary['updated'] ?? 0),
-            'deactivated'   => (int) ($summary['deactivated'] ?? 0),
-            'rejected'      => (int) ($summary['rejected'] ?? 0),
-            'rejected_rows' => json_encode(
-                array_values($rejected),
-                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-            ),
-        ]);
+        // Best-effort: if the sync_logs table has not been created yet, the sync
+        // itself should still succeed. We log a clear hint instead of failing.
+        try {
+            return Database::insert('sync_logs', [
+                'source'        => $source,
+                'received'      => $received,
+                'inserted'      => (int) ($summary['inserted'] ?? 0),
+                'updated'       => (int) ($summary['updated'] ?? 0),
+                'deactivated'   => (int) ($summary['deactivated'] ?? 0),
+                'rejected'      => (int) ($summary['rejected'] ?? 0),
+                'rejected_rows' => json_encode(
+                    array_values($rejected),
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                ),
+            ]);
+        } catch (\PDOException $e) {
+            error_log('[sheet-sync] could not write sync_logs (run database/sync-logs.sql?): ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * Whether the sync_logs table exists. Used by the admin page to show a
+     * clear "import the migration" notice instead of crashing with a 500.
+     */
+    public static function tableReady(): bool
+    {
+        try {
+            Database::fetchValue('SELECT 1 FROM sync_logs LIMIT 1');
+            return true;
+        } catch (\PDOException $e) {
+            return false;
+        }
     }
 
     /**

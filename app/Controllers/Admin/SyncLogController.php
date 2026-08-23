@@ -29,9 +29,15 @@ class SyncLogController extends Controller
     {
         Auth::requireAdmin();
 
+        // The sync_logs table is created by a migration that may not have been
+        // imported yet. Detect that so the page shows a setup notice instead of
+        // failing with a 500.
+        $ready = SyncLog::tableReady();
+
         $this->view('admin/sync-logs/index', [
             'title' => 'همگام‌سازی محصولات',
-            'logs'  => SyncLog::recent(50),
+            'ready' => $ready,
+            'logs'  => $ready ? SyncLog::recent(50) : [],
         ], 'admin');
     }
 
@@ -42,6 +48,13 @@ class SyncLogController extends Controller
     {
         Auth::requireAdmin();
         Csrf::check();
+
+        // Refuse to run before the log table exists, so a sync never applies
+        // product changes without being recorded.
+        if (!SyncLog::tableReady()) {
+            Flash::error('ابتدا فایل database/sync-logs.sql را در دیتابیس ایمپورت کنید.');
+            redirect('admin/sync-logs');
+        }
 
         $file = $_FILES['csv'] ?? null;
 

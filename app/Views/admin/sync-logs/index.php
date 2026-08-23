@@ -2,14 +2,34 @@
 /**
  * گزارش همگام‌سازی محصولات + آپلود دستی CSV.
  *
- * @var array $logs فهرست اجراهای اخیر همگام‌سازی
+ * @var array $logs  فهرست اجراهای اخیر همگام‌سازی
+ * @var bool  $ready آیا جدول sync_logs ساخته شده است
  */
 
 use App\Core\Csrf;
 
+$ready = $ready ?? true;
+
 // آدرس کامل نقطه پایانی که در اسکریپت گوگل باید تنظیم شود
 $endpoint = rtrim(url('api/sheet-sync.php'), '/');
 ?>
+
+<?php if (!$ready): ?>
+    <div class="panel panel--todo" style="border-inline-start-color: var(--danger);">
+        <h2 class="panel__title">یک قدم راه‌اندازی مانده</h2>
+        <p class="page-hint">
+            جدول <code class="ltr">sync_logs</code> هنوز در دیتابیس ساخته نشده است، برای همین
+            این صفحه کار نمی‌کرد. برای فعال شدن همگام‌سازی، یک‌بار فایل زیر را در
+            <b>phpMyAdmin → Import</b> اجرا کنید (کاملاً امن است و هیچ داده‌ای را پاک نمی‌کند):
+        </p>
+        <p><code class="ltr">database/sync-logs.sql</code></p>
+        <p class="page-hint">
+            پس از ایمپورت، همین صفحه را دوباره باز کنید. توکن مخفی را هم در
+            <code class="ltr">config/config.local.php</code> تنظیم کنید (راهنما:
+            <code class="ltr">docs/SHEET-SYNC.md</code>).
+        </p>
+    </div>
+<?php else: ?>
 
 <!-- آپلود دستی فایل CSV -->
 <div class="panel">
@@ -134,3 +154,5 @@ $endpoint = rtrim(url('api/sheet-sync.php'), '/');
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<?php endif; /* $ready */ ?>
