@@ -29,10 +29,15 @@ class SheetSync
     /**
      * Run the sync for a batch of rows and return the report.
      *
-     * @param array $rows list of associative product rows from the sheet
+     * @param array  $rows              list of associative product rows
+     * @param string $source            where the batch came from (stored in the log)
+     * @param bool   $deactivateMissing whether products absent from the batch are
+     *                                   deactivated. True for the authoritative
+     *                                   Google Sheet full sync; false for a manual
+     *                                   CSV upload that may be only a partial list.
      * @return array{success:bool,summary:array,rejected_rows:array}
      */
-    public function run(array $rows): array
+    public function run(array $rows, string $source = 'google_sheet', bool $deactivateMissing = true): array
     {
         $summary  = ['inserted' => 0, 'updated' => 0, 'deactivated' => 0, 'rejected' => 0];
         $rejected = [];
@@ -63,9 +68,10 @@ class SheetSync
             }
         }
 
-        // Deactivation sweep. Skipped when no SKU was received at all, so an
-        // empty or broken sheet can never wipe the whole catalogue.
-        if ($seenSkus !== []) {
+        // Deactivation sweep. Skipped when disabled (e.g. a partial CSV upload)
+        // or when no SKU was received at all, so an empty or partial batch can
+        // never wipe the whole catalogue.
+        if ($deactivateMissing && $seenSkus !== []) {
             $summary['deactivated'] = $this->deactivateMissing($seenSkus);
         }
 
@@ -76,7 +82,7 @@ class SheetSync
         ];
 
         // Persist the report so the owner can review past runs in the panel.
-        SyncLog::record('google_sheet', count($rows), $summary, $rejected);
+        SyncLog::record($source, count($rows), $summary, $rejected);
 
         return $report;
     }

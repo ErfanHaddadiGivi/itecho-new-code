@@ -464,3 +464,10 @@ body.centered-page {
     text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--line-soft);
 }
 .sync-rejected__table th { background: var(--bg); font-weight: 700; font-size: 12.5px; }
+
+/* آپلود دستی CSV در صفحه همگام‌سازی */
+.csv-upload { max-width: 560px; margin-top: 8px; }
+.csv-upload input[type="file"] {
+    width: 100%; padding: 9px 10px; font-family: inherit; font-size: 13.5px;
+    background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius-sm);
+}

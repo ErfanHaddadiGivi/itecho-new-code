@@ -144,8 +144,9 @@ $router->get('/admin/banners/{id}/edit',   'Admin\BannerController@edit');
 $router->post('/admin/banners/{id}',       'Admin\BannerController@update');
 $router->post('/admin/banners/{id}/delete','Admin\BannerController@destroy');
 
-// --- گزارش همگام‌سازی گوگل‌شیت ---
-$router->get('/admin/sync-logs', 'Admin\SyncLogController@index');
+// --- همگام‌سازی محصولات (گزارش‌ها + آپلود دستی CSV) ---
+$router->get('/admin/sync-logs',         'Admin\SyncLogController@index');
+$router->post('/admin/sync-logs/upload', 'Admin\SyncLogController@upload');
 
 // --- تنظیمات ---
 $router->get('/admin/settings',  'Admin\SettingController@index');
