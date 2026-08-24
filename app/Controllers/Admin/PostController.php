@@ -21,7 +21,7 @@ class PostController extends Controller
         Auth::requireAdmin();
 
         $this->view('admin/posts/index', [
-            'title' => 'مطالب گیمینگ',
+            'title' => 'مجله آیتکو',
             'posts' => Post::allForAdmin(),
         ], 'admin');
     }
@@ -159,11 +159,14 @@ class PostController extends Controller
     private function readForm(): array
     {
         return [
-            'title'        => (string) $this->input('title'),
-            'slug'         => (string) $this->input('slug'),
-            'excerpt'      => (string) $this->input('excerpt'),
-            'content'      => (string) ($_POST['content'] ?? ''),
-            'is_published' => $this->boolInput('is_published'),
+            'title'            => (string) $this->input('title'),
+            'slug'             => (string) $this->input('slug'),
+            'excerpt'          => (string) $this->input('excerpt'),
+            'meta_title'       => (string) $this->input('meta_title'),
+            'meta_description' => (string) $this->input('meta_description'),
+            'focus_keyword'    => (string) $this->input('focus_keyword'),
+            'content'          => (string) ($_POST['content'] ?? ''),
+            'is_published'     => $this->boolInput('is_published'),
         ];
     }
 

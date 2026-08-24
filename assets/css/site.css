@@ -1028,3 +1028,42 @@ body.no-scroll { overflow: hidden; }
 
 /* اسلایدر: قاب نئونی نازک */
 .hero-slider { box-shadow: 0 0 0 1px var(--line-soft), 0 14px 40px -26px rgba(11,110,79,.5); }
+
+/* =====================================================================
+   هدر چسبان + بهبود موبایل برای بخش‌های جدید
+   ===================================================================== */
+.site-header {
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 2px 10px -8px rgba(22, 33, 28, .5);
+}
+
+/* لنگر پیمایش تا هدر چسبان روی هدف ننشیند */
+html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 96px; }
+
+@media (max-width: 860px) {
+    /* منوی کشویی موبایل وقتی باز است، بلندتر از صفحه نشود */
+    .mega-nav.is-open { max-height: 72vh; overflow-y: auto; }
+}
+
+@media (max-width: 600px) {
+    /* ویجت تماس کمی کوچک‌تر روی موبایل */
+    .contact-fab { inset-block-end: 14px; inset-inline-start: 14px; }
+    .contact-fab__toggle { width: 48px; height: 48px; }
+
+    /* پاپ‌آپ روی موبایل کمی جمع‌وجورتر */
+    .consult-popup__box { padding: 26px 18px 22px; }
+    .consult-popup__phone { font-size: 22px; }
+
+    /* بلاگ: در موبایل تک‌ستونه‌ی راحت */
+    .blog-grid { grid-template-columns: 1fr; }
+
+    /* عنوان بخش‌ها و اکشن‌ها در موبایل زیر هم */
+    .section__head { flex-wrap: wrap; }
+}
+
+/* جعبه‌ی سئو و پیش‌نمایش گوگل روی موبایل بدون سرریز افقی */
+@media (max-width: 520px) {
+    .seo-box__head { flex-wrap: wrap; gap: 8px; }
+    .seo-snippet__title { white-space: normal; }
+}

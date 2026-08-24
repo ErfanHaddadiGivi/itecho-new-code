@@ -58,7 +58,7 @@ $isActive = static function (string $segment) use ($path): string {
             <a class="admin-nav__link<?= $isActive('reviews') ?>" href="<?= e(url('admin/reviews')) ?>">نظرات</a>
 
             <span class="admin-nav__label">محتوا</span>
-            <a class="admin-nav__link<?= $isActive('posts') ?>" href="<?= e(url('admin/posts')) ?>">مطالب گیمینگ</a>
+            <a class="admin-nav__link<?= $isActive('posts') ?>" href="<?= e(url('admin/posts')) ?>">مجله آیتکو</a>
             <a class="admin-nav__link<?= $isActive('pages') ?>" href="<?= e(url('admin/pages')) ?>">متن صفحات</a>
 
             <span class="admin-nav__label">شخصی‌سازی ظاهر</span>

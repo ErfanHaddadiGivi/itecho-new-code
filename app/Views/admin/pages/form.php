@@ -1,12 +1,15 @@
 <?php
 /**
- * ویرایش متن یک صفحه ثابت
+ * افزودن / ویرایش صفحه‌ی ثابت
  *
- * @var array $page
- * @var array $errors
+ * @var array|null $page  اگر null باشد یعنی حالت افزودن
+ * @var array      $errors
  */
 
 use App\Core\Csrf;
+
+$isEdit = $page !== null;
+$action = $isEdit ? url('admin/pages/' . $page['id']) : url('admin/pages');
 
 $value = static function (string $field, mixed $fallback = '') use ($page) {
     $old = App\Core\Flash::oldInput($field);
@@ -18,7 +21,7 @@ $value = static function (string $field, mixed $fallback = '') use ($page) {
 ?>
 
 <div class="panel panel--form">
-    <form action="<?= e(url('admin/pages/' . $page['id'])) ?>" method="post" class="form">
+    <form action="<?= e($action) ?>" method="post" class="form">
         <?= Csrf::field() ?>
 
         <div class="field">
@@ -27,7 +30,17 @@ $value = static function (string $field, mixed $fallback = '') use ($page) {
             <?php if (isset($errors['title'])): ?>
                 <span class="field__error"><?= e($errors['title']) ?></span>
             <?php endif; ?>
-            <span class="field__hint">آدرس صفحه ثابت است: <code class="ltr">/page/<?= e($page['slug']) ?></code></span>
+        </div>
+
+        <div class="field">
+            <label for="slug">نامک (آدرس صفحه)</label>
+            <?php if ($isEdit): ?>
+                <input type="text" id="slug" value="<?= e((string) $page['slug']) ?>" dir="ltr" disabled>
+                <span class="field__hint">آدرس صفحه ثابت است: <code class="ltr">/page/<?= e($page['slug']) ?></code></span>
+            <?php else: ?>
+                <input type="text" id="slug" name="slug" value="<?= e((string) $value('slug')) ?>" dir="ltr">
+                <span class="field__hint">خالی بگذارید تا خودکار از روی عنوان ساخته شود. بعداً قابل تغییر نیست.</span>
+            <?php endif; ?>
         </div>
 
         <div class="field">
@@ -51,7 +64,7 @@ $value = static function (string $field, mixed $fallback = '') use ($page) {
         </div>
 
         <div class="form-actions">
-            <button class="btn btn--primary" type="submit">ذخیره تغییرات</button>
+            <button class="btn btn--primary" type="submit"><?= $isEdit ? 'ذخیره تغییرات' : 'افزودن صفحه' ?></button>
             <a class="btn btn--ghost" href="<?= e(url('admin/pages')) ?>">انصراف</a>
         </div>
     </form>

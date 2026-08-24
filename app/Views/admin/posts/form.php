@@ -65,8 +65,54 @@ $value = static function (string $field, mixed $fallback = '') use ($post) {
 
         <div class="field">
             <label for="content">متن کامل مطلب</label>
-            <textarea id="content" name="content" rows="14" class="mono-ltr-off"><?= e((string) $value('content')) ?></textarea>
+            <textarea id="content" name="content" rows="14"><?= e((string) $value('content')) ?></textarea>
             <span class="field__hint">می‌توانید از تگ‌های ساده HTML مثل &lt;p&gt;، &lt;h2&gt;، &lt;strong&gt; و &lt;ul&gt; استفاده کنید.</span>
+        </div>
+
+        <!-- ============ تحلیل سئو (بلادرنگ) ============ -->
+        <div class="seo-box" id="seo-box"
+             data-blogbase="<?= e(rtrim(url('blog'), '/')) ?>"
+             data-hascover="<?= $isEdit && !empty($post['cover_image']) ? '1' : '0' ?>">
+            <div class="seo-box__head">
+                <h3>تحلیل سئو</h3>
+                <div class="seo-score" id="seo-score">
+                    <span class="seo-score__num" id="seo-score-num">۰</span>
+                    <span class="seo-score__label" id="seo-score-label">—</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="focus_keyword">کلمه کلیدی اصلی</label>
+                <input type="text" id="focus_keyword" name="focus_keyword"
+                       value="<?= e((string) $value('focus_keyword')) ?>" maxlength="120"
+                       placeholder="مثلاً: خرید کنسول ps5">
+                <span class="field__hint">عبارتی که می‌خواهید این مطلب با آن در گوگل دیده شود.</span>
+            </div>
+
+            <div class="field">
+                <label for="meta_title">عنوان سئو (Title)</label>
+                <input type="text" id="meta_title" name="meta_title"
+                       value="<?= e((string) $value('meta_title')) ?>" maxlength="191"
+                       placeholder="خالی بگذارید تا از عنوان مطلب ساخته شود">
+                <span class="seo-count" id="meta_title_count"></span>
+            </div>
+
+            <div class="field">
+                <label for="meta_description">توضیح متا (Description)</label>
+                <textarea id="meta_description" name="meta_description" rows="2" maxlength="300"
+                          placeholder="خلاصه‌ی جذاب برای نمایش در نتایج گوگل"><?= e((string) $value('meta_description')) ?></textarea>
+                <span class="seo-count" id="meta_description_count"></span>
+            </div>
+
+            <!-- پیش‌نمایش نتیجه‌ی گوگل -->
+            <div class="seo-snippet" aria-hidden="true">
+                <span class="seo-snippet__url" id="snippet-url"></span>
+                <span class="seo-snippet__title" id="snippet-title"></span>
+                <span class="seo-snippet__desc" id="snippet-desc"></span>
+            </div>
+
+            <!-- فهرست بررسی‌ها -->
+            <ul class="seo-checks" id="seo-checks"></ul>
         </div>
 
         <div class="field field--check">
@@ -85,3 +131,5 @@ $value = static function (string $field, mixed $fallback = '') use ($post) {
         </div>
     </form>
 </div>
+
+<script src="<?= e(asset('js/seo-analyzer.js')) ?>" defer></script>

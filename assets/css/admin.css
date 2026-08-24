@@ -475,3 +475,52 @@ body.centered-page {
 /* عنوان همراه با تصویر کوچک در جدول‌های پنل (مثل فهرست مطالب) */
 .cell-title { display: flex; align-items: center; gap: 10px; }
 .cell-title .cell-thumb { width: 44px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+
+/* =====================================================================
+   جعبه‌ی تحلیل سئو در فرم مطلب
+   ===================================================================== */
+.seo-box {
+    border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; margin: 20px 0; background: var(--bg);
+}
+.seo-box__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.seo-box__head h3 { margin: 0; font-size: 15px; }
+
+.seo-score {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 6px 14px; border-radius: 30px; background: var(--surface);
+    border: 1px solid var(--line);
+}
+.seo-score__num { font-size: 22px; font-weight: 800; font-family: var(--font-mono); }
+.seo-score__label { font-size: 12.5px; font-weight: 700; }
+.seo-score--good { border-color: #b7e0c8; } .seo-score--good .seo-score__num, .seo-score--good .seo-score__label { color: var(--ok); }
+.seo-score--ok   { border-color: #f3d9a6; } .seo-score--ok   .seo-score__num, .seo-score--ok   .seo-score__label { color: var(--warn); }
+.seo-score--bad  { border-color: #ecc4bf; } .seo-score--bad  .seo-score__num, .seo-score--bad  .seo-score__label { color: var(--danger); }
+
+.seo-count { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.seo-count--over { color: var(--danger); font-weight: 600; }
+
+/* پیش‌نمایش نتیجه‌ی گوگل */
+.seo-snippet {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 12px 14px; margin: 14px 0; direction: ltr; text-align: left;
+}
+.seo-snippet__url   { display: block; color: #3a7d3a; font-size: 12.5px; direction: ltr; word-break: break-all; }
+.seo-snippet__title { display: block; color: #1a0dab; font-size: 17px; line-height: 1.5; margin-top: 2px;
+    direction: rtl; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.seo-snippet__desc  { display: block; color: #4d5156; font-size: 13px; line-height: 1.7; margin-top: 3px;
+    direction: rtl; text-align: right; }
+
+/* فهرست بررسی‌ها */
+.seo-checks { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.seo-check { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; line-height: 1.7; }
+.seo-check__dot {
+    flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 800; color: #fff; margin-top: 2px;
+}
+.seo-check--good .seo-check__dot { background: var(--ok); }
+.seo-check--ok   .seo-check__dot { background: var(--warn); }
+.seo-check--bad  .seo-check__dot { background: var(--danger); }
+.seo-check--good { color: var(--ink); }
+.seo-check--bad  { color: var(--ink); font-weight: 500; }

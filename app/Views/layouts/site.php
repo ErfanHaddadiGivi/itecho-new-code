@@ -19,14 +19,47 @@ $siteLogo   = Setting::get('site_logo', '');
 $favicon    = Setting::get('site_favicon', '');
 $megamenuBg = Setting::get('megamenu_bg', '');
 $themeStyle = Theme::inlineStyle();
+
+// --- سئو: مقادیر پیش‌فرض که هر صفحه می‌تواند بازنویسی کند ---
+$scheme      = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host        = $_SERVER['HTTP_HOST'] ?? '';
+$origin      = $host !== '' ? $scheme . '://' . $host : '';
+$currentPath = strtok($_SERVER['REQUEST_URI'] ?? '/', '?');
+
+$metaTitle       = $title ?? $siteName;
+$metaDescription = $metaDescription ?? Setting::get('site_description', '');
+$canonical       = $canonical ?? ($origin !== '' ? $origin . $currentPath : '');
+$ogType          = $ogType ?? 'website';
+$ogImage         = $ogImage ?? '';
+// اگر تصویر سوشال نسبی باشد، آدرس کامل می‌سازیم
+if ($ogImage !== '' && !str_starts_with($ogImage, 'http') && $origin !== '') {
+    $ogImage = $origin . $ogImage;
+}
+$jsonLd = $jsonLd ?? '';
 ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="<?= e(Setting::get('site_description', '')) ?>">
-    <title><?= e($title ?? $siteName) ?></title>
+    <title><?= e($metaTitle) ?></title>
+    <meta name="description" content="<?= e($metaDescription) ?>">
+    <?php if ($canonical !== ''): ?><link rel="canonical" href="<?= e($canonical) ?>"><?php endif; ?>
+
+    <!-- Open Graph / شبکه‌های اجتماعی -->
+    <meta property="og:site_name" content="<?= e($siteName) ?>">
+    <meta property="og:title" content="<?= e($metaTitle) ?>">
+    <meta property="og:description" content="<?= e($metaDescription) ?>">
+    <meta property="og:type" content="<?= e($ogType) ?>">
+    <?php if ($canonical !== ''): ?><meta property="og:url" content="<?= e($canonical) ?>"><?php endif; ?>
+    <?php if ($ogImage !== ''): ?><meta property="og:image" content="<?= e($ogImage) ?>"><?php endif; ?>
+    <meta name="twitter:card" content="<?= $ogImage !== '' ? 'summary_large_image' : 'summary' ?>">
+    <meta name="twitter:title" content="<?= e($metaTitle) ?>">
+    <meta name="twitter:description" content="<?= e($metaDescription) ?>">
+    <?php if ($ogImage !== ''): ?><meta name="twitter:image" content="<?= e($ogImage) ?>"><?php endif; ?>
+    <?php if ($jsonLd !== ''): ?>
+    <script type="application/ld+json"><?= $jsonLd ?></script>
+    <?php endif; ?>
     <?php if ($favicon): ?>
         <link rel="icon" href="<?= e(url('uploads/branding/' . $favicon)) ?>">
     <?php else: ?>
@@ -50,7 +83,7 @@ $themeStyle = Theme::inlineStyle();
         <div class="container topbar__inner">
             <span class="topbar__note">ارسال به سراسر ایران · ضمانت اصالت کالا</span>
             <div class="topbar__links">
-                <a href="<?= e(url('blog')) ?>">مطالب گیمینگ</a>
+                <a href="<?= e(url('blog')) ?>">مجله آیتکو</a>
                 <a href="<?= e(url('page/contact')) ?>">تماس با ما</a>
                 <a href="<?= e(url('page/about')) ?>">درباره ما</a>
             </div>
@@ -179,7 +212,7 @@ $themeStyle = Theme::inlineStyle();
             <ul>
                 <li><a href="<?= e(url('page/about')) ?>">درباره ما</a></li>
                 <li><a href="<?= e(url('page/contact')) ?>">تماس با ما</a></li>
-                <li><a href="<?= e(url('blog')) ?>">مطالب گیمینگ</a></li>
+                <li><a href="<?= e(url('blog')) ?>">مجله آیتکو</a></li>
             </ul>
         </div>
 

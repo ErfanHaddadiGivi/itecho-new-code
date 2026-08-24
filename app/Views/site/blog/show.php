@@ -11,7 +11,7 @@
     <div class="container">
         <nav class="breadcrumb" aria-label="مسیر">
             <a href="<?= e(url('')) ?>">خانه</a> ›
-            <a href="<?= e(url('blog')) ?>">مطالب گیمینگ</a> ›
+            <a href="<?= e(url('blog')) ?>">مجله آیتکو</a> ›
             <span><?= e($post['title']) ?></span>
         </nav>
 
@@ -38,7 +38,7 @@
         </div>
 
         <div class="post__foot">
-            <a class="btn btn--ghost" href="<?= e(url('blog')) ?>">← بازگشت به مطالب</a>
+            <a class="btn btn--ghost" href="<?= e(url('blog')) ?>">← بازگشت به مجله</a>
         </div>
     </div>
 </article>

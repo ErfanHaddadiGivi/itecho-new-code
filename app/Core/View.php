@@ -32,6 +32,11 @@ class View
             return;
         }
 
+        // مقادیر دیگری که صفحه به Layout می‌دهد (مثل توضیح متا و داده‌های سئو)
+        // در دسترس Layout قرار می‌گیرند. EXTR_SKIP یعنی $content و $title و
+        // $scripts که بالاتر تنظیم شده‌اند بازنویسی نمی‌شوند.
+        extract($data, EXTR_SKIP);
+
         require $layoutFile;
     }
 

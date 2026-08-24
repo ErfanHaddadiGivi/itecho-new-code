@@ -1,6 +1,6 @@
 <?php
 /**
- * فهرست مطالب گیمینگ.
+ * فهرست مجله آیتکو.
  *
  * @var array $posts
  * @var App\Core\Paginator $paginator
@@ -13,7 +13,7 @@ use App\Core\View;
 <section class="section">
     <div class="container">
         <div class="section__head">
-            <h1>مطالب گیمینگ</h1>
+            <h1>مجله آیتکو</h1>
         </div>
 
         <?php if (!$posts): ?>
