@@ -1067,3 +1067,22 @@ html { scroll-behavior: smooth; }
     .seo-box__head { flex-wrap: wrap; gap: 8px; }
     .seo-snippet__title { white-space: normal; }
 }
+
+/* =====================================================================
+   آیکون دسته‌ها در مگا منو — با بردن ماوس ظاهر می‌شود
+   ===================================================================== */
+.mega-link { display: flex; align-items: center; }
+.mega-icon {
+    width: 0; height: 20px; opacity: 0; object-fit: contain; flex-shrink: 0;
+    margin-inline-end: 0;
+    transition: width .2s ease, opacity .2s ease, margin-inline-end .2s ease;
+}
+/* با هاور روی آیتم، آیکونش با یک انیمیشن ملایم ظاهر می‌شود */
+.mega-link:hover .mega-icon,
+.mega-nav__item > a:hover .mega-icon {
+    width: 20px; opacity: 1; margin-inline-end: 8px;
+}
+/* در منوی موبایل (لمسی) آیکون‌ها همیشه نمایش داده می‌شوند */
+@media (max-width: 860px) {
+    .mega-icon { width: 18px; opacity: 1; margin-inline-end: 8px; }
+}

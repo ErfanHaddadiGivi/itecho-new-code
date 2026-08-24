@@ -48,7 +48,7 @@ class Category extends Model
     public static function menuTree(): array
     {
         $rows = Database::fetchAll(
-            'SELECT id, parent_id, name, slug, image
+            'SELECT id, parent_id, name, slug, icon
                FROM categories
               WHERE is_active = 1 AND show_in_menu = 1
               ORDER BY sort_order, name'

@@ -148,15 +148,23 @@ $jsonLd = $jsonLd ?? '';
             <ul class="mega-nav__list">
                 <?php foreach ($menu as $item): ?>
                     <li class="mega-nav__item<?= $item['children'] ? ' has-children' : '' ?>">
-                        <a href="<?= e(url('category/' . $item['slug'])) ?>"><?= e($item['name']) ?></a>
+                        <a class="mega-link" href="<?= e(url('category/' . $item['slug'])) ?>">
+                            <?php if (!empty($item['icon'])): ?>
+                                <img class="mega-icon" src="<?= e(url('uploads/categories/' . $item['icon'])) ?>" alt="" loading="lazy">
+                            <?php endif; ?>
+                            <span><?= e($item['name']) ?></span>
+                        </a>
 
                         <?php if ($item['children']): ?>
                             <div class="mega-panel">
                                 <ul>
                                     <?php foreach ($item['children'] as $child): ?>
                                         <li>
-                                            <a href="<?= e(url('category/' . $child['slug'])) ?>">
-                                                <?= e($child['name']) ?>
+                                            <a class="mega-link" href="<?= e(url('category/' . $child['slug'])) ?>">
+                                                <?php if (!empty($child['icon'])): ?>
+                                                    <img class="mega-icon" src="<?= e(url('uploads/categories/' . $child['icon'])) ?>" alt="" loading="lazy">
+                                                <?php endif; ?>
+                                                <span><?= e($child['name']) ?></span>
                                             </a>
                                         </li>
                                     <?php endforeach; ?>

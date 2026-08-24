@@ -62,6 +62,15 @@ class CategoryController extends Controller
             $data['image'] = $image;
         }
 
+        try {
+            $icon = Upload::image($_FILES['icon'] ?? [], 'categories');
+        } catch (\RuntimeException $e) {
+            $this->backWithErrors(['icon' => $e->getMessage()], 'admin/categories/create');
+        }
+        if ($icon !== null) {
+            $data['icon'] = $icon;
+        }
+
         Category::create($data);
 
         Flash::success('دسته‌بندی «' . $data['name'] . '» اضافه شد.');
@@ -122,11 +131,26 @@ class CategoryController extends Controller
             $data['image'] = null;
         }
 
+        // آیکون مگا منو: آپلود جدید جایگزین می‌شود، یا با تیک حذف می‌شود
+        try {
+            $newIcon = Upload::image($_FILES['icon'] ?? [], 'categories');
+        } catch (\RuntimeException $e) {
+            $this->backWithErrors(['icon' => $e->getMessage()], 'admin/categories/' . $categoryId . '/edit');
+        }
+        if ($newIcon !== null) {
+            $data['icon'] = $newIcon;
+        } elseif (!empty($_POST['remove_icon'])) {
+            $data['icon'] = null;
+        }
+
         Category::updateById($categoryId, $data);
 
         // تصویر قدیمی که جایگزین یا حذف شد از دیسک پاک می‌شود
         if (($newImage !== null || !empty($_POST['remove_image'])) && !empty($category['image'])) {
             Upload::delete($category['image'], 'categories');
+        }
+        if (($newIcon !== null || !empty($_POST['remove_icon'])) && !empty($category['icon'])) {
+            Upload::delete($category['icon'], 'categories');
         }
 
         Flash::success('تغییرات ذخیره شد.');
@@ -157,6 +181,8 @@ class CategoryController extends Controller
         }
 
         Category::deleteById($categoryId);
+        Upload::delete($category['image'] ?? null, 'categories');
+        Upload::delete($category['icon'] ?? null, 'categories');
 
         Flash::success('دسته‌بندی «' . $category['name'] . '» حذف شد.');
         redirect('admin/categories');

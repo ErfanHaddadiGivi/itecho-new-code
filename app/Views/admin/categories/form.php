@@ -83,6 +83,26 @@ $value = static function (string $field, mixed $fallback = '') use ($category) {
             <?php endif; ?>
         </div>
 
+        <div class="field">
+            <label>آیکون مگا منو</label>
+            <?php if ($isEdit && !empty($category['icon'])): ?>
+                <div class="brand-upload__preview brand-upload__preview--favicon">
+                    <img src="<?= e(url('uploads/categories/' . $category['icon'])) ?>" alt="آیکون فعلی">
+                </div>
+                <label class="brand-upload__remove">
+                    <input type="checkbox" name="remove_icon" value="1"> حذف آیکون
+                </label>
+            <?php endif; ?>
+            <input type="file" name="icon" accept="image/png,image/jpeg,image/webp">
+            <span class="field__hint">
+                آیکون کوچکی که هنگام بردن ماوس روی این دسته در مگا منو ظاهر می‌شود.
+                ترجیحاً مربعی و شفاف (PNG)، مثلاً ۶۴×۶۴ پیکسل.
+            </span>
+            <?php if (isset($errors['icon'])): ?>
+                <span class="field__error"><?= e($errors['icon']) ?></span>
+            <?php endif; ?>
+        </div>
+
         <div class="field field--narrow">
             <label for="sort_order">ترتیب نمایش</label>
             <input type="number" id="sort_order" name="sort_order"
