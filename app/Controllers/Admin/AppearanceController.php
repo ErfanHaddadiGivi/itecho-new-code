@@ -26,13 +26,14 @@ class AppearanceController extends Controller
         Auth::requireAdmin();
 
         $this->view('admin/appearance/index', [
-            'title'   => 'رنگ و تم، لوگو و نام',
-            'primary' => Theme::primary(),
-            'accent'  => Theme::accent(),
-            'siteName'=> Setting::get('site_name', 'ایتکو'),
-            'logo'    => Setting::get('site_logo', ''),
-            'favicon' => Setting::get('site_favicon', ''),
-            'errors'  => Flash::errors(),
+            'title'     => 'رنگ و تم، لوگو و نام',
+            'primary'   => Theme::primary(),
+            'accent'    => Theme::accent(),
+            'siteName'  => Setting::get('site_name', 'ایتکو'),
+            'logo'      => Setting::get('site_logo', ''),
+            'favicon'   => Setting::get('site_favicon', ''),
+            'megamenuBg'=> Setting::get('megamenu_bg', ''),
+            'errors'    => Flash::errors(),
         ], 'admin');
     }
 
@@ -55,10 +56,11 @@ class AppearanceController extends Controller
             Setting::set('site_name', $siteName, 'general');
         }
 
-        // --- لوگو ---
+        // --- لوگو، فاوآیکون و پس‌زمینه مگا منو ---
         try {
             $this->handleImage('logo', 'site_logo');
             $this->handleImage('favicon', 'site_favicon');
+            $this->handleImage('megamenu_bg', 'megamenu_bg');
         } catch (\RuntimeException $e) {
             $this->backWithErrors(['image' => $e->getMessage()], 'admin/appearance');
         }

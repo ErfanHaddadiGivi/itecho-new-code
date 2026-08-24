@@ -80,6 +80,10 @@ $router->post('/payment/callback',  'PaymentController@callback');
 $router->get('/pay/{token}',       'PaymentController@showToken');
 $router->post('/pay/{token}/start', 'PaymentController@startToken');
 
+// بلاگ / مطالب گیمینگ
+$router->get('/blog',         'BlogController@index');
+$router->get('/blog/{slug}',  'BlogController@show');
+
 // صفحات ثابت اینماد: قوانین، حریم خصوصی، درباره ما، تماس با ما
 $router->get('/page/{slug}', 'PageController@show');
 
@@ -131,6 +135,19 @@ $router->post('/admin/brands/{id}/delete','Admin\BrandController@destroy');
 $router->get('/admin/reviews',                'Admin\ReviewController@index');
 $router->post('/admin/reviews/{id}/status',   'Admin\ReviewController@updateStatus');
 $router->post('/admin/reviews/{id}/delete',   'Admin\ReviewController@destroy');
+
+// --- مطالب گیمینگ (بلاگ) ---
+$router->get('/admin/posts',             'Admin\PostController@index');
+$router->get('/admin/posts/create',      'Admin\PostController@create');
+$router->post('/admin/posts',            'Admin\PostController@store');
+$router->get('/admin/posts/{id}/edit',   'Admin\PostController@edit');
+$router->post('/admin/posts/{id}',       'Admin\PostController@update');
+$router->post('/admin/posts/{id}/delete','Admin\PostController@destroy');
+
+// --- متن صفحات ثابت ---
+$router->get('/admin/pages',           'Admin\PageController@index');
+$router->get('/admin/pages/{id}/edit', 'Admin\PageController@edit');
+$router->post('/admin/pages/{id}',     'Admin\PageController@update');
 
 // --- شخصی‌سازی ظاهر: رنگ و تم، لوگو و نام ---
 $router->get('/admin/appearance',  'Admin\AppearanceController@index');

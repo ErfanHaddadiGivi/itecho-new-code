@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS reviews, inventory_logs, payments, order_status_history,
   variant_attribute_values, product_variants, product_attributes, product_specs,
   product_images, products, attribute_values, attributes, brands, categories,
   verification_codes, user_addresses, users, banners, contact_messages, pages,
-  sync_logs, settings;
+  posts, sync_logs, settings;
 
 
 -- =====================================================================
@@ -656,6 +656,28 @@ CREATE TABLE sync_logs (
   KEY idx_sync_logs_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='Google Sheet product-sync run reports';
+
+
+-- =====================================================================
+--  بخش ۱۰ — مطالب و مقالات گیمینگ (بلاگ)
+-- =====================================================================
+CREATE TABLE posts (
+  id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  title        VARCHAR(191) NOT NULL,
+  slug         VARCHAR(191) NOT NULL,
+  excerpt      VARCHAR(500) DEFAULT NULL COMMENT 'خلاصه کوتاه برای کارت مطلب',
+  content      MEDIUMTEXT DEFAULT NULL COMMENT 'متن کامل مطلب (HTML ساده)',
+  cover_image  VARCHAR(255) DEFAULT NULL COMMENT 'تصویر کاور',
+  is_published TINYINT(1) NOT NULL DEFAULT 1,
+  published_at DATETIME DEFAULT NULL,
+  views        INT UNSIGNED NOT NULL DEFAULT 0,
+  created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uq_posts_slug (slug),
+  KEY idx_posts_published (is_published, published_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  COMMENT='مطالب و مقالات گیمینگ (بلاگ)';
 
 
 SET FOREIGN_KEY_CHECKS = 1;

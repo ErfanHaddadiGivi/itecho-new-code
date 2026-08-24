@@ -17,6 +17,9 @@ uploads/banners/*
 !uploads/categories/
 uploads/categories/*
 !uploads/categories/.gitkeep
+!uploads/posts/
+uploads/posts/*
+!uploads/posts/.gitkeep
 
 # لاگ‌ها — خود پوشه بماند تا PHP بتواند در آن بنویسد
 logs/*

@@ -17,6 +17,7 @@ $messages   = Flash::pull();
 $siteName   = Setting::get('site_name', 'ایتکو');
 $siteLogo   = Setting::get('site_logo', '');
 $favicon    = Setting::get('site_favicon', '');
+$megamenuBg = Setting::get('megamenu_bg', '');
 $themeStyle = Theme::inlineStyle();
 ?>
 <!doctype html>
@@ -49,6 +50,7 @@ $themeStyle = Theme::inlineStyle();
         <div class="container topbar__inner">
             <span class="topbar__note">ارسال به سراسر ایران · ضمانت اصالت کالا</span>
             <div class="topbar__links">
+                <a href="<?= e(url('blog')) ?>">مطالب گیمینگ</a>
                 <a href="<?= e(url('page/contact')) ?>">تماس با ما</a>
                 <a href="<?= e(url('page/about')) ?>">درباره ما</a>
             </div>
@@ -107,7 +109,8 @@ $themeStyle = Theme::inlineStyle();
     </div>
 
     <!-- مگا منو: از روی دسته‌بندی‌ها ساخته می‌شود -->
-    <nav class="mega-nav" id="mega-nav" aria-label="دسته‌بندی محصولات">
+    <nav class="mega-nav<?= $megamenuBg ? ' mega-nav--bg' : '' ?>" id="mega-nav" aria-label="دسته‌بندی محصولات"
+         <?= $megamenuBg ? 'style="--megamenu-bg:url(' . e(url('uploads/branding/' . $megamenuBg)) . ')"' : '' ?>>
         <div class="container">
             <ul class="mega-nav__list">
                 <?php foreach ($menu as $item): ?>
@@ -172,10 +175,11 @@ $themeStyle = Theme::inlineStyle();
         </div>
 
         <div>
-            <h3>ایتکو</h3>
+            <h3><?= e($siteName) ?></h3>
             <ul>
                 <li><a href="<?= e(url('page/about')) ?>">درباره ما</a></li>
                 <li><a href="<?= e(url('page/contact')) ?>">تماس با ما</a></li>
+                <li><a href="<?= e(url('blog')) ?>">مطالب گیمینگ</a></li>
             </ul>
         </div>
 
@@ -201,7 +205,14 @@ $themeStyle = Theme::inlineStyle();
     </div>
 </footer>
 
+<?php
+// ویجت تماس چسبان و پاپ‌آپ مشاوره (هر دو از تنظیمات قابل ویرایش‌اند)
+App\Core\View::partial('site/partials/contact-widget');
+App\Core\View::partial('site/partials/consult-popup');
+?>
+
 <script src="<?= e(asset('js/site.js')) ?>" defer></script>
+<script src="<?= e(asset('js/site-extras.js')) ?>" defer></script>
 <?php foreach (($scripts ?? []) as $script): ?>
 <script src="<?= e(asset('js/' . $script)) ?>" defer></script>
 <?php endforeach; ?>

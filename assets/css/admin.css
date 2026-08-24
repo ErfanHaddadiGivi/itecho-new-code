@@ -471,3 +471,7 @@ body.centered-page {
     width: 100%; padding: 9px 10px; font-family: inherit; font-size: 13.5px;
     background: var(--bg); border: 1px dashed var(--line); border-radius: var(--radius-sm);
 }
+
+/* عنوان همراه با تصویر کوچک در جدول‌های پنل (مثل فهرست مطالب) */
+.cell-title { display: flex; align-items: center; gap: 10px; }
+.cell-title .cell-thumb { width: 44px; height: 32px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }

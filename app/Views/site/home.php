@@ -1,13 +1,19 @@
 <?php
 /**
  * صفحه اصلی فروشگاه.
- * بخش محصولات در مرحله ۳ کامل می‌شود.
  *
  * @var array $categories
  * @var array $featured
  * @var array $newest
  * @var array $banners
  */
+
+use App\Models\Setting;
+
+// متن‌های صفحه اصلی از تنظیمات خوانده می‌شوند و از پنل قابل ویرایش‌اند.
+$heroTitle    = Setting::get('hero_title', 'تکنولوژی، با خیال راحت');
+$heroSubtitle = Setting::get('hero_subtitle', 'موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ — با ضمانت اصالت کالا و ارسال به سراسر ایران.');
+$heroCta      = Setting::get('hero_cta', 'شروع خرید');
 ?>
 
 <?php if (!empty($banners)): ?>
@@ -19,9 +25,11 @@
     <section class="hero">
         <div class="container hero__inner">
             <div class="hero__text">
-                <h1>تکنولوژی، با خیال راحت</h1>
-                <p>موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ — با ضمانت اصالت کالا و ارسال به سراسر ایران.</p>
-                <a class="btn btn--primary btn--lg" href="#categories">شروع خرید</a>
+                <h1><?= e($heroTitle) ?></h1>
+                <?php if ($heroSubtitle !== ''): ?><p><?= e($heroSubtitle) ?></p><?php endif; ?>
+                <?php if ($heroCta !== ''): ?>
+                    <a class="btn btn--primary btn--lg" href="#categories"><?= e($heroCta) ?></a>
+                <?php endif; ?>
             </div>
         </div>
     </section>
@@ -39,11 +47,17 @@
         <?php else: ?>
             <div class="category-grid">
                 <?php foreach ($categories as $category): ?>
-                    <?php $hasBg = !empty($category['image']); ?>
+                    <?php
+                        $hasBg   = !empty($category['image']);
+                        $tagline = trim((string) ($category['description'] ?? ''));
+                    ?>
                     <a class="category-card<?= $hasBg ? ' category-card--bg' : '' ?>"
                        href="<?= e(url('category/' . $category['slug'])) ?>"
                        <?= $hasBg ? 'style="background-image:url(' . e(url('uploads/categories/' . $category['image'])) . ')"' : '' ?>>
                         <span class="category-card__name"><?= e($category['name']) ?></span>
+                        <?php if ($tagline !== ''): ?>
+                            <span class="category-card__tag"><?= e($tagline) ?></span>
+                        <?php endif; ?>
                     </a>
                 <?php endforeach; ?>
             </div>

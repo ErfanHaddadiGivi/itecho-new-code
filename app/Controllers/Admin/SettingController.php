@@ -19,6 +19,8 @@ class SettingController extends Controller
     /** گروه‌های تنظیمات و عنوان فارسی هر گروه */
     private const GROUPS = [
         'general'  => 'اطلاعات کلی سایت',
+        'homepage' => 'متن صفحه اصلی',
+        'popup'    => 'پاپ‌آپ مشاوره',
         'shipping' => 'ارسال و تحویل',
         'payment'  => 'درگاه پرداخت',
         'mail'     => 'ایمیل و کد تایید',
@@ -35,6 +37,9 @@ class SettingController extends Controller
         'zarinpal_sandbox' => 'toggle',
         'maintenance_mode' => 'toggle',
         'smtp_secure'      => 'select:tls,ssl',
+        'hero_subtitle'    => 'textarea',
+        'consult_popup_text'    => 'textarea',
+        'consult_popup_enabled' => 'toggle',
     ];
 
     public function index(): void

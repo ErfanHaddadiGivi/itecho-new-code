@@ -7,6 +7,7 @@
  * @var string $siteName
  * @var string $logo
  * @var string $favicon
+ * @var string $megamenuBg
  * @var array  $errors
  */
 
@@ -123,6 +124,23 @@ $presets = [
                     <?php endif; ?>
                     <input type="file" name="favicon" accept="image/png,image/jpeg,image/webp">
                     <span class="field__hint">تصویر مربعی کوچک، مثلاً ۶۴×۶۴ پیکسل.</span>
+                </div>
+
+                <!-- پس‌زمینه مگا منو -->
+                <div class="field brand-upload">
+                    <label>پس‌زمینه مگا منو</label>
+                    <?php if ($megamenuBg): ?>
+                        <div class="brand-upload__preview brand-upload__preview--banner">
+                            <img src="<?= e(url('uploads/branding/' . $megamenuBg)) ?>" alt="پس‌زمینه فعلی مگا منو">
+                        </div>
+                        <label class="brand-upload__remove">
+                            <input type="checkbox" name="remove_megamenu_bg" value="1"> حذف پس‌زمینه مگا منو
+                        </label>
+                    <?php endif; ?>
+                    <input type="file" name="megamenu_bg" accept="image/png,image/jpeg,image/webp">
+                    <span class="field__hint">
+                        تصویری که پشت پنل‌های بازشوی مگا منو نمایش داده می‌شود (روی آن یک لایه‌ی تیره برای خوانایی می‌افتد).
+                    </span>
                 </div>
             </div>
         </div>

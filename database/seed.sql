@@ -34,6 +34,7 @@ INSERT INTO settings (setting_key, setting_value, setting_group, title, sort_ord
 ('instagram_url',        '',                          'general',  'اینستاگرام', 70),
 ('telegram_url',         '',                          'general',  'تلگرام', 80),
 ('whatsapp_number',      '',                          'general',  'واتس‌اپ', 90),
+('location_url',         '',                          'general',  'لینک لوکیشن روی نقشه (گوگل مپ)', 95),
 ('enamad_code',          '',                          'general',  'کد HTML نماد اعتماد الکترونیکی', 100),
 ('products_per_page',    '12',                        'general',  'تعداد محصول در هر صفحه', 110),
 ('maintenance_mode',     '0',                         'general',  'حالت تعمیرات سایت', 120),
@@ -69,6 +70,19 @@ INSERT INTO settings (setting_key, setting_value, setting_group, title, sort_ord
 ('theme_accent',         '#C2680E',                   'appearance', 'رنگ تاکیدی', 20),
 ('site_logo',            '',                          'appearance', 'لوگوی سایت', 30),
 ('site_favicon',         '',                          'appearance', 'فاوآیکون', 40);
+
+-- ---------------------------------------------------------------------
+--  محتوای صفحه اصلی و پاپ‌آپ مشاوره
+-- ---------------------------------------------------------------------
+INSERT INTO settings (setting_key, setting_value, setting_group, title, sort_order) VALUES
+('hero_title',            'تکنولوژی، با خیال راحت',    'homepage', 'عنوان بزرگ صفحه اصلی', 10),
+('hero_subtitle',         'موبایل، کامپیوتر، کنسول بازی و تجهیزات گیمینگ — با ضمانت اصالت کالا و ارسال به سراسر ایران.', 'homepage', 'متن زیر عنوان صفحه اصلی', 20),
+('hero_cta',              'شروع خرید',                 'homepage', 'متن دکمه صفحه اصلی', 30),
+
+('consult_popup_enabled', '1',                         'popup',    'نمایش پاپ‌آپ مشاوره', 10),
+('consult_popup_title',   'به ایتکو خوش آمدید 🎮',      'popup',    'عنوان پاپ‌آپ', 20),
+('consult_popup_text',    'اگر برای انتخاب یا خرید نیاز به راهنمایی و مشاوره دارید، با ما تماس بگیرید:', 'popup', 'متن پاپ‌آپ', 30),
+('consult_popup_phone',   '09011020032',               'popup',    'شماره تماس مشاوره', 40);
 
 
 -- ---------------------------------------------------------------------
