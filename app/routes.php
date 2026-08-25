@@ -160,6 +160,11 @@ $router->post('/admin/pages/{id}/delete','Admin\PageController@destroy');
 $router->get('/admin/appearance',  'Admin\AppearanceController@index');
 $router->post('/admin/appearance', 'Admin\AppearanceController@update');
 
+// --- ویدیوی پس‌زمینه‌ی صفحه‌ها ---
+$router->get('/admin/page-videos',         'Admin\PageVideoController@index');
+$router->post('/admin/page-videos',        'Admin\PageVideoController@store');
+$router->post('/admin/page-videos/delete', 'Admin\PageVideoController@destroy');
+
 // --- اسلایدر صفحه اصلی ---
 $router->get('/admin/banners',             'Admin\BannerController@index');
 $router->get('/admin/banners/create',      'Admin\BannerController@create');

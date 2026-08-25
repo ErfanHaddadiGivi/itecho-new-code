@@ -31,6 +31,19 @@
         var vcontent = vhero.querySelector('.video-hero__content');
         var ticking = false;
 
+        /* روی موبایل، اگر نسخه‌ی جدا آپلود شده باشد، همان را لود می‌کنیم
+           (تا فقط یک ویدیو دانلود شود و اندازه‌ها بهم نریزد). */
+        var video = vhero.querySelector('.video-hero__video');
+        if (video) {
+            var mobileSrc = video.getAttribute('data-src-mobile');
+            if (mobileSrc && window.matchMedia('(max-width: 600px)').matches) {
+                video.setAttribute('src', mobileSrc);
+                video.load();
+                var playAttempt = video.play();
+                if (playAttempt && playAttempt.catch) { playAttempt.catch(function () {}); }
+            }
+        }
+
         function fadeOnScroll() {
             var h = window.innerHeight || 1;
             var y = window.scrollY || window.pageYOffset || 0;

@@ -20,6 +20,9 @@ $favicon    = Setting::get('site_favicon', '');
 $megamenuBg = Setting::get('megamenu_bg', '');
 $themeStyle = Theme::inlineStyle();
 
+// ویدیوی پس‌زمینه‌ی مخصوص همین صفحه (اگر تنظیم شده باشد)
+$pageVideo = App\Core\PageVideo::forPath($_SERVER['REQUEST_URI'] ?? '/');
+
 // --- سئو: مقادیر پیش‌فرض که هر صفحه می‌تواند بازنویسی کند ---
 $scheme      = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host        = $_SERVER['HTTP_HOST'] ?? '';
@@ -178,15 +181,30 @@ $jsonLd = $jsonLd ?? '';
     </nav>
 </header>
 
-<?php if ($messages): ?>
-    <div class="container">
-        <?php foreach ($messages as $message): ?>
-            <div class="alert alert--<?= e($message['type']) ?>"><?= e($message['text']) ?></div>
-        <?php endforeach; ?>
-    </div>
+<?php if ($pageVideo): ?>
+    <?php
+        // متن روی ویدیو فقط برای صفحه اصلی از تنظیمات خوانده می‌شود
+        $isHomeVideo = $pageVideo['key'] === 'home';
+        App\Core\View::partial('site/partials/video-hero', [
+            'video'       => $pageVideo['desktop'],
+            'videoMobile' => $pageVideo['mobile'],
+            'full'        => $isHomeVideo,
+            'vtitle'      => $isHomeVideo ? Setting::get('hero_title', 'تکنولوژی، با خیال راحت') : '',
+            'vsubtitle'   => $isHomeVideo ? Setting::get('hero_subtitle', '') : '',
+            'vcta'        => $isHomeVideo ? Setting::get('hero_cta', 'شروع خرید') : '',
+        ]);
+    ?>
 <?php endif; ?>
 
-<main id="main">
+<main id="main"<?= $pageVideo ? ' class="main--over-video"' : '' ?>>
+    <?php if ($messages): ?>
+        <div class="container">
+            <?php foreach ($messages as $message): ?>
+                <div class="alert alert--<?= e($message['type']) ?>"><?= e($message['text']) ?></div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
     <?= $content ?>
 </main>
 

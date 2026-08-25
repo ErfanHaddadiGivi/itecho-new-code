@@ -1092,10 +1092,11 @@ html { scroll-behavior: smooth; }
    ===================================================================== */
 .video-hero {
     position: relative;
-    min-height: 92vh;
+    min-height: 56vh;   /* بنر ویدیویی صفحه‌های داخلی */
     display: flex; align-items: center; justify-content: center;
     text-align: center;
 }
+.video-hero--full { min-height: 92vh; }   /* تمام‌قد برای صفحه اصلی */
 /* ویدیو ثابت پشت محتوا می‌ماند؛ محتوای بعدی (home-body) روی آن اسکرول می‌شود */
 .video-hero__bg {
     position: fixed; inset: 0; z-index: -1;
@@ -1136,11 +1137,13 @@ html { scroll-behavior: smooth; }
 }
 @keyframes vhScroll { 0%,100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(10px); opacity: .3; } }
 
-/* بدنه‌ی صفحه که با پس‌زمینه‌ی مات روی ویدیو می‌آید */
-.home-body--over-video { position: relative; z-index: 0; background: var(--bg); }
+/* بدنه‌ی صفحه که با پس‌زمینه‌ی مات روی ویدیوی ثابت می‌آید */
+.home-body--over-video,
+.main--over-video { position: relative; z-index: 0; background: var(--bg); }
 
 @media (max-width: 600px) {
-    .video-hero { min-height: 78vh; }
+    .video-hero { min-height: 44vh; }
+    .video-hero--full { min-height: 78vh; }
 }
 
 /* =====================================================================

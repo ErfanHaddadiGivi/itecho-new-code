@@ -33,7 +33,6 @@ class AppearanceController extends Controller
             'logo'      => Setting::get('site_logo', ''),
             'favicon'   => Setting::get('site_favicon', ''),
             'megamenuBg'=> Setting::get('megamenu_bg', ''),
-            'heroVideo' => Setting::get('hero_video', ''),
             'errors'    => Flash::errors(),
         ], 'admin');
     }
@@ -62,7 +61,6 @@ class AppearanceController extends Controller
             $this->handleImage('logo', 'site_logo');
             $this->handleImage('favicon', 'site_favicon');
             $this->handleImage('megamenu_bg', 'megamenu_bg');
-            $this->handleVideo('hero_video', 'hero_video');
         } catch (\RuntimeException $e) {
             $this->backWithErrors(['image' => $e->getMessage()], 'admin/appearance');
         }
@@ -99,25 +97,4 @@ class AppearanceController extends Controller
         }
     }
 
-    /**
-     * آپلود (یا حذف) ویدیو و ذخیره نامش در تنظیمات — مثل handleImage ولی برای ویدیو.
-     */
-    private function handleVideo(string $field, string $key): void
-    {
-        $current = (string) Setting::get($key, '');
-
-        if (!empty($_POST['remove_' . $field]) && $current !== '') {
-            Upload::delete($current, self::BRAND_DIR);
-            Setting::set($key, '', 'appearance');
-            return;
-        }
-
-        $newName = Upload::video($_FILES[$field] ?? [], self::BRAND_DIR);
-        if ($newName !== null) {
-            Setting::set($key, $newName, 'appearance');
-            if ($current !== '') {
-                Upload::delete($current, self::BRAND_DIR);
-            }
-        }
-    }
 }
