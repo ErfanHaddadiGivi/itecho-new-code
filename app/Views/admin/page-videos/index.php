@@ -4,6 +4,8 @@
  *
  * @var array $targets     همه‌ی صفحه‌های قابل انتخاب (کلید => برچسب)
  * @var array $configured  صفحه‌هایی که همین حالا ویدیو دارند
+ * @var int   $fadeSpeed   شدت محوشدن (درصد ارتفاع صفحه)
+ * @var int   $bandHeight  ارتفاع بنر صفحه‌های داخلی (vh)
  */
 
 use App\Core\Csrf;
@@ -48,6 +50,38 @@ use App\Core\Csrf;
 
         <div class="form-actions">
             <button class="btn btn--primary" type="submit">ذخیره ویدیوی صفحه</button>
+        </div>
+    </form>
+</div>
+
+<!-- تنظیمات نمایش ویدیو -->
+<div class="panel panel--form">
+    <h2 class="panel__title">تنظیمات نمایش</h2>
+    <form action="<?= e(url('admin/page-videos/settings')) ?>" method="post" class="form">
+        <?= Csrf::field() ?>
+
+        <div class="field field--narrow">
+            <label for="video_fade_speed">شدت محوشدن با اسکرول</label>
+            <input type="number" id="video_fade_speed" name="video_fade_speed"
+                   value="<?= e((string) $fadeSpeed) ?>" min="20" max="200" step="5" dir="ltr">
+            <span class="field__hint">
+                درصدی از ارتفاع صفحه که ویدیو رویش کامل محو می‌شود. عدد کوچک‌تر = محوشدن سریع‌تر
+                (پیش‌فرض ۹۰).
+            </span>
+        </div>
+
+        <div class="field field--narrow">
+            <label for="video_band_height">ارتفاع بنر ویدیو در صفحه‌های داخلی</label>
+            <input type="number" id="video_band_height" name="video_band_height"
+                   value="<?= e((string) $bandHeight) ?>" min="25" max="100" step="1" dir="ltr">
+            <span class="field__hint">
+                بر حسب درصد ارتفاع صفحه (vh) — مربوط به دسته‌بندی‌ها، مجله و صفحه‌های ثابت.
+                صفحه اصلی همیشه تمام‌قد است. (پیش‌فرض ۵۶)
+            </span>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn--primary" type="submit">ذخیره تنظیمات نمایش</button>
         </div>
     </form>
 </div>

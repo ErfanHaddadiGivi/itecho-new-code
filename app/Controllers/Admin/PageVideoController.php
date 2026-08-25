@@ -27,7 +27,27 @@ class PageVideoController extends Controller
             'title'      => 'ویدیوی صفحات',
             'targets'    => PageVideo::targets(),
             'configured' => PageVideo::configured(),
+            'fadeSpeed'  => Setting::getInt('video_fade_speed', 90),
+            'bandHeight' => Setting::getInt('video_band_height', 56),
         ], 'admin');
+    }
+
+    /**
+     * ذخیره‌ی تنظیمات نمایش ویدیو: شدت محوشدن و ارتفاع بنر صفحه‌های داخلی.
+     */
+    public function saveSettings(): void
+    {
+        Auth::requireAdmin();
+        Csrf::check();
+
+        $fade = max(20, min(200, $this->intInput('video_fade_speed', 90)));
+        $band = max(25, min(100, $this->intInput('video_band_height', 56)));
+
+        Setting::set('video_fade_speed', (string) $fade, 'pagevideo');
+        Setting::set('video_band_height', (string) $band, 'pagevideo');
+
+        Flash::success('تنظیمات نمایش ویدیو ذخیره شد.');
+        redirect('admin/page-videos');
     }
 
     public function store(): void

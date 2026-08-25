@@ -192,6 +192,9 @@ $jsonLd = $jsonLd ?? '';
             'vtitle'      => $isHomeVideo ? Setting::get('hero_title', 'تکنولوژی، با خیال راحت') : '',
             'vsubtitle'   => $isHomeVideo ? Setting::get('hero_subtitle', '') : '',
             'vcta'        => $isHomeVideo ? Setting::get('hero_cta', 'شروع خرید') : '',
+            // شدت محوشدن و ارتفاع بنر از تنظیمات (بخش ویدیوی صفحات)
+            'fade'        => max(20, min(200, Setting::getInt('video_fade_speed', 90))) / 100,
+            'bandHeight'  => Setting::getInt('video_band_height', 56),
         ]);
     ?>
 <?php endif; ?>

@@ -161,9 +161,10 @@ $router->get('/admin/appearance',  'Admin\AppearanceController@index');
 $router->post('/admin/appearance', 'Admin\AppearanceController@update');
 
 // --- ویدیوی پس‌زمینه‌ی صفحه‌ها ---
-$router->get('/admin/page-videos',         'Admin\PageVideoController@index');
-$router->post('/admin/page-videos',        'Admin\PageVideoController@store');
-$router->post('/admin/page-videos/delete', 'Admin\PageVideoController@destroy');
+$router->get('/admin/page-videos',           'Admin\PageVideoController@index');
+$router->post('/admin/page-videos',          'Admin\PageVideoController@store');
+$router->post('/admin/page-videos/delete',   'Admin\PageVideoController@destroy');
+$router->post('/admin/page-videos/settings', 'Admin\PageVideoController@saveSettings');
 
 // --- اسلایدر صفحه اصلی ---
 $router->get('/admin/banners',             'Admin\BannerController@index');

@@ -16,8 +16,15 @@ $full        = $full ?? false;
 $vtitle      = $vtitle ?? '';
 $vsubtitle   = $vsubtitle ?? '';
 $vcta        = $vcta ?? '';
+$fade        = $fade ?? 0.9;            // کسری از ارتفاع صفحه برای محوشدن کامل
+$bandHeight  = $bandHeight ?? 0;        // ارتفاع بنر صفحه‌های داخلی (vh) — ۰ یعنی پیش‌فرض CSS
+
+// در صفحه‌های داخلی (غیر خانه) اگر ارتفاع سفارشی داده شده، به‌صورت متغیر CSS اعمال می‌شود
+// (تا در موبایل هم بتواند مقیاس بخورد).
+$style = (!$full && $bandHeight > 0) ? ' style="--vh-band:' . (int) $bandHeight . 'vh"' : '';
 ?>
-<section class="video-hero<?= $full ? ' video-hero--full' : '' ?>" data-video-hero>
+<section class="video-hero<?= $full ? ' video-hero--full' : '' ?>" data-video-hero
+         data-fade="<?= e((string) $fade) ?>"<?= $style ?>>
     <div class="video-hero__bg">
         <video class="video-hero__video" autoplay muted loop playsinline preload="auto"
                src="<?= e(url('uploads/branding/' . $video)) ?>"

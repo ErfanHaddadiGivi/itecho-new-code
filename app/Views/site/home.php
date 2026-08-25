@@ -35,8 +35,12 @@ $heroCta      = Setting::get('hero_cta', 'شروع خرید');
             </div>
         </section>
     <?php endif; ?>
+<?php elseif (!empty($banners)): ?>
+    <!-- ویدیو بالای صفحه است؛ اسلایدر هم زیر آن (روی محتوا) نمایش داده می‌شود -->
+    <div class="container home-slider-under-video">
+        <?php App\Core\View::partial('site/partials/hero-slider', ['banners' => $banners]); ?>
+    </div>
 <?php endif; ?>
-<?php // اگر ویدیوی صفحه اصلی تنظیم شده باشد، لایوت آن را بالای صفحه نمایش می‌دهد ?>
 
 <!-- دسته‌بندی‌های اصلی -->
 <section class="section" id="categories">

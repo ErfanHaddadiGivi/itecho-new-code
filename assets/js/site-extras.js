@@ -44,10 +44,13 @@
             }
         }
 
+        // فاصله‌ای که ویدیو رویش کامل محو می‌شود (کسری از ارتفاع صفحه) — قابل تنظیم از پنل
+        var fadeFactor = parseFloat(vhero.getAttribute('data-fade')) || 0.9;
+
         function fadeOnScroll() {
             var h = window.innerHeight || 1;
             var y = window.scrollY || window.pageYOffset || 0;
-            var p = Math.min(1, y / (h * 0.9)); // ۰ در بالا → ۱ بعد از حدود یک صفحه اسکرول
+            var p = Math.min(1, y / (h * fadeFactor)); // ۰ در بالا → ۱ بعد از پیمایش قابل تنظیم
             if (vbg) { vbg.style.opacity = String(1 - p); }
             if (vcontent) {
                 vcontent.style.opacity = String(1 - Math.min(1, p * 1.4));
