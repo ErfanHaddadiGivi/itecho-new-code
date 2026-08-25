@@ -24,6 +24,31 @@
         });
     }
 
+    /* ---------- ویدیوی پس‌زمینه‌ی استیکی که با اسکرول محو می‌شود ---------- */
+    var vhero = document.querySelector('[data-video-hero]');
+    if (vhero) {
+        var vbg = vhero.querySelector('.video-hero__bg');
+        var vcontent = vhero.querySelector('.video-hero__content');
+        var ticking = false;
+
+        function fadeOnScroll() {
+            var h = window.innerHeight || 1;
+            var y = window.scrollY || window.pageYOffset || 0;
+            var p = Math.min(1, y / (h * 0.9)); // ۰ در بالا → ۱ بعد از حدود یک صفحه اسکرول
+            if (vbg) { vbg.style.opacity = String(1 - p); }
+            if (vcontent) {
+                vcontent.style.opacity = String(1 - Math.min(1, p * 1.4));
+                vcontent.style.transform = 'translateY(' + (y * 0.18) + 'px)';
+            }
+            ticking = false;
+        }
+
+        window.addEventListener('scroll', function () {
+            if (!ticking) { window.requestAnimationFrame(fadeOnScroll); ticking = true; }
+        }, { passive: true });
+        fadeOnScroll();
+    }
+
     /* ---------- پاپ‌آپ مشاوره ---------- */
     var popup = document.getElementById('consult-popup');
     if (popup) {

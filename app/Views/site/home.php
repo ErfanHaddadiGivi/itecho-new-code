@@ -16,7 +16,26 @@ $heroSubtitle = Setting::get('hero_subtitle', 'موبایل، کامپیوتر،
 $heroCta      = Setting::get('hero_cta', 'شروع خرید');
 ?>
 
-<?php if (!empty($banners)): ?>
+<?php if (!empty($heroVideo)): ?>
+    <!-- ویدیوی پس‌زمینه‌ی استیکی که با اسکرول محو می‌شود -->
+    <section class="video-hero" data-video-hero>
+        <div class="video-hero__bg">
+            <video class="video-hero__video" autoplay muted loop playsinline preload="auto"
+                   src="<?= e(url('uploads/branding/' . $heroVideo)) ?>"></video>
+            <span class="video-hero__scrim" aria-hidden="true"></span>
+        </div>
+        <div class="container video-hero__content">
+            <h1><?= e($heroTitle) ?></h1>
+            <?php if ($heroSubtitle !== ''): ?><p><?= e($heroSubtitle) ?></p><?php endif; ?>
+            <?php if ($heroCta !== ''): ?>
+                <a class="btn btn--primary btn--lg" href="#categories"><?= e($heroCta) ?></a>
+            <?php endif; ?>
+        </div>
+        <a class="video-hero__scroll" href="#categories" aria-label="پایین">
+            <span></span>
+        </a>
+    </section>
+<?php elseif (!empty($banners)): ?>
     <!-- اسلایدر مدیریت‌شده از پنل؛ اگر اسلایدی نباشد بخش ثابت زیر نمایش داده می‌شود -->
     <div class="container">
         <?php App\Core\View::partial('site/partials/hero-slider', ['banners' => $banners]); ?>
@@ -34,6 +53,9 @@ $heroCta      = Setting::get('hero_cta', 'شروع خرید');
         </div>
     </section>
 <?php endif; ?>
+
+<!-- محتوای صفحه که هنگام اسکرول روی ویدیوی ثابت می‌آید -->
+<div class="home-body<?= !empty($heroVideo) ? ' home-body--over-video' : '' ?>">
 
 <!-- دسته‌بندی‌های اصلی -->
 <section class="section" id="categories">
@@ -122,3 +144,5 @@ $heroCta      = Setting::get('hero_cta', 'شروع خرید');
         </div>
     </div>
 </section>
+
+</div><!-- /.home-body -->

@@ -29,6 +29,71 @@ class Upload
         IMAGETYPE_WEBP => 'webp',
     ];
 
+    /** بیشترین حجم مجاز ویدیو: ۲۰ مگابایت (به محدودیت آپلود هاست هم بستگی دارد) */
+    private const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
+
+    /** نوع‌های ویدیوی مجاز → پسوند */
+    private const ALLOWED_VIDEO = [
+        'video/mp4'       => 'mp4',
+        'video/webm'      => 'webm',
+        'video/quicktime' => 'mp4',
+    ];
+
+    /**
+     * ذخیره یک ویدیوی آپلودشده (مثلاً ویدیوی پس‌زمینه‌ی صفحه اصلی).
+     *
+     * @param  array  $file یک عضو از $_FILES
+     * @param  string $dir  پوشه مقصد داخل uploads
+     * @return string|null  نام فایل ذخیره‌شده، یا null اگر فایلی انتخاب نشده بود
+     * @throws \RuntimeException با پیام فارسی قابل نمایش
+     */
+    public static function video(array $file, string $dir = 'branding'): ?string
+    {
+        if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        self::assertNoUploadError($file['error']);
+
+        if (!is_uploaded_file($file['tmp_name'])) {
+            throw new \RuntimeException('فایل ارسالی معتبر نیست.');
+        }
+
+        if ($file['size'] > self::MAX_VIDEO_BYTES) {
+            throw new \RuntimeException('حجم ویدیو نباید بیشتر از ۲۰ مگابایت باشد.');
+        }
+
+        // نوع واقعی فایل با finfo بررسی می‌شود، نه با پسوند یا هدر مرورگر
+        $mime = false;
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mime  = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+        } elseif (function_exists('mime_content_type')) {
+            $mime = mime_content_type($file['tmp_name']);
+        }
+
+        if ($mime === false || !isset(self::ALLOWED_VIDEO[$mime])) {
+            throw new \RuntimeException('فقط ویدیو با فرمت MP4 یا WebM مجاز است.');
+        }
+
+        $extension = self::ALLOWED_VIDEO[$mime];
+        $folder    = ROOT_PATH . '/uploads/' . $dir;
+
+        if (!is_dir($folder) && !mkdir($folder, 0755, true) && !is_dir($folder)) {
+            throw new \RuntimeException('پوشه آپلود قابل ساخت نیست. دسترسی پوشه uploads را بررسی کنید.');
+        }
+
+        $name = date('Ymd') . '-' . bin2hex(random_bytes(8)) . '.' . $extension;
+        $path = $folder . '/' . $name;
+
+        if (!move_uploaded_file($file['tmp_name'], $path)) {
+            throw new \RuntimeException('ذخیره ویدیو ناموفق بود. دسترسی نوشتن پوشه uploads را بررسی کنید.');
+        }
+
+        return $name;
+    }
+
     /**
      * ذخیره یک تصویر آپلودشده.
      *

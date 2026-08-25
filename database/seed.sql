@@ -69,7 +69,9 @@ INSERT INTO settings (setting_key, setting_value, setting_group, title, sort_ord
 ('theme_primary',        '#0B6E4F',                   'appearance', 'رنگ برند', 10),
 ('theme_accent',         '#C2680E',                   'appearance', 'رنگ تاکیدی', 20),
 ('site_logo',            '',                          'appearance', 'لوگوی سایت', 30),
-('site_favicon',         '',                          'appearance', 'فاوآیکون', 40);
+('site_favicon',         '',                          'appearance', 'فاوآیکون', 40),
+('megamenu_bg',          '',                          'appearance', 'پس‌زمینه مگا منو', 50),
+('hero_video',           '',                          'appearance', 'ویدیوی پس‌زمینه صفحه اصلی', 60);
 
 -- ---------------------------------------------------------------------
 --  محتوای صفحه اصلی و پاپ‌آپ مشاوره

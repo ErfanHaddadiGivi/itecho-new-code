@@ -6,6 +6,7 @@ use App\Core\Controller;
 use App\Core\Database;
 use App\Models\Banner;
 use App\Models\Category;
+use App\Models\Setting;
 
 /**
  * صفحه اصلی فروشگاه.
@@ -40,6 +41,7 @@ class HomeController extends Controller
             'featured'   => $featured,
             'newest'     => $newest,
             'banners'    => $banners,
+            'heroVideo'  => Setting::get('hero_video', ''),
             // اسکریپت اسلایدر فقط در صفحه اصلی بارگذاری می‌شود
             'scripts'    => $banners ? ['slider.js'] : [],
         ], 'site');

@@ -142,6 +142,25 @@ $presets = [
                         تصویری که پشت پنل‌های بازشوی مگا منو نمایش داده می‌شود (روی آن یک لایه‌ی تیره برای خوانایی می‌افتد).
                     </span>
                 </div>
+
+                <!-- ویدیوی پس‌زمینه‌ی صفحه اصلی -->
+                <div class="field brand-upload">
+                    <label>ویدیوی پس‌زمینه‌ی صفحه اصلی</label>
+                    <?php if ($heroVideo): ?>
+                        <div class="brand-upload__preview brand-upload__preview--banner">
+                            <video src="<?= e(url('uploads/branding/' . $heroVideo)) ?>" muted loop playsinline
+                                   style="max-height:150px;border-radius:8px;" autoplay></video>
+                        </div>
+                        <label class="brand-upload__remove">
+                            <input type="checkbox" name="remove_hero_video" value="1"> حذف ویدیو
+                        </label>
+                    <?php endif; ?>
+                    <input type="file" name="hero_video" accept="video/mp4,video/webm">
+                    <span class="field__hint">
+                        ویدیوی کوتاه بالای صفحه اصلی که با اسکرول محو می‌شود. فرمت MP4 یا WebM،
+                        حداکثر ۲۰ مگابایت (به محدودیت آپلود هاست هم بستگی دارد). ترجیحاً کوتاه و بی‌صدا.
+                    </span>
+                </div>
             </div>
         </div>
     </div>
