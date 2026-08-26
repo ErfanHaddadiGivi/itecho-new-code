@@ -52,6 +52,7 @@ class CategoryController extends Controller
             'attributes' => Attribute::filterableForCategories($categoryIds),
             'priceRange' => Product::priceRange(['category_ids' => $categoryIds]),
             'active'     => $filters,
+            'scripts'    => ['filters.js'],
         ], 'site');
     }
 

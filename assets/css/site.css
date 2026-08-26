@@ -1194,3 +1194,61 @@ html { scroll-behavior: smooth; }
 
 /* قلب/دکمه‌های تعاملی ظریف‌تر بدرخشند */
 .hero-slider__dot.is-active { box-shadow: 0 0 8px rgba(255,255,255,.8); }
+
+/* =====================================================================
+   فیلتر محصولات سبک دیجی‌کالا: بخش‌های بازشونده، چیپ‌ها، جستجوی برند
+   ===================================================================== */
+
+/* سایدبار چسبان روی دسکتاپ (زیر هدر) */
+@media (min-width: 900px) {
+    .filters {
+        position: sticky; top: 168px;   /* پایین‌تر از هدر چسبان */
+        max-height: calc(100vh - 184px); overflow-y: auto;
+    }
+}
+
+/* گروه فیلتر به‌صورت آکاردئون (details/summary) */
+details.filter-group > summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 8px; padding: 2px 0;
+}
+details.filter-group > summary::-webkit-details-marker { display: none; }
+details.filter-group > summary h3 { margin: 0; }
+details.filter-group > summary::after {
+    content: ""; width: 8px; height: 8px; flex-shrink: 0;
+    border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+    transform: rotate(45deg); transition: transform .18s ease; margin-bottom: 3px;
+}
+details.filter-group[open] > summary::after { transform: rotate(-135deg); margin-bottom: -3px; }
+.filter-group__body { padding-top: 10px; }
+.filter-group--plain { padding-top: 14px; }
+
+/* جستجوی داخل لیست برند */
+.filter-search {
+    width: 100%; font-family: inherit; font-size: 13px;
+    padding: 7px 10px; margin-bottom: 8px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--bg); color: var(--ink);
+}
+.filter-search:focus { outline: none; border-color: var(--brand); background: var(--surface); }
+
+/* چیپ فیلترهای فعال بالای نتایج */
+.filter-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 16px; }
+.filter-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 12px; border-radius: 20px;
+    background: var(--brand-soft); color: var(--brand);
+    font-size: 12.5px; font-weight: 600;
+    transition: background .15s ease, color .15s ease;
+}
+.filter-chip:hover { text-decoration: none; background: var(--brand); color: #fff; }
+.filter-chip__x { font-size: 11px; opacity: .85; }
+.filter-chips__clear { font-size: 12.5px; color: var(--danger); font-weight: 600; }
+.filter-chips__clear:hover { text-decoration: underline; }
+
+/* نشانگر فعال‌بودن فیلتر روی دکمه‌ی موبایل */
+.filters-toggle__dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); margin-inline-start: 5px; vertical-align: middle;
+}
