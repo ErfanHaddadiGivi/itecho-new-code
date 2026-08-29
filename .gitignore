@@ -29,8 +29,10 @@ logs/*
 !logs/.htaccess
 !logs/.gitkeep
 
-# فایل‌های موقت
-tmp/
+# فایل‌های موقت — خود پوشه بماند (برای کش نرخ ارز)، محتوایش نه
+tmp/*
+!tmp/.htaccess
+!tmp/.gitkeep
 *.log
 
 # فایل‌های سیستمی

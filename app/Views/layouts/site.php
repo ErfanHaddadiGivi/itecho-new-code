@@ -85,6 +85,7 @@ $jsonLd = $jsonLd ?? '';
     <div class="topbar">
         <div class="container topbar__inner">
             <span class="topbar__note">ارسال به سراسر ایران · ضمانت اصالت کالا</span>
+            <?php App\Core\View::partial('site/partials/rate-box'); ?>
             <div class="topbar__links">
                 <a href="<?= e(url('blog')) ?>">مجله آیتکو</a>
                 <a href="<?= e(url('page/contact')) ?>">تماس با ما</a>
@@ -275,6 +276,7 @@ App\Core\View::partial('site/partials/consult-popup');
 
 <script src="<?= e(asset('js/site.js')) ?>" defer></script>
 <script src="<?= e(asset('js/site-extras.js')) ?>" defer></script>
+<script src="<?= e(asset('js/rates.js')) ?>" defer></script>
 <?php foreach (($scripts ?? []) as $script): ?>
 <script src="<?= e(asset('js/' . $script)) ?>" defer></script>
 <?php endforeach; ?>

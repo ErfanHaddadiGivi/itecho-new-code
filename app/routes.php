@@ -84,6 +84,9 @@ $router->post('/pay/{token}/start', 'PaymentController@startToken');
 $router->get('/blog',         'BlogController@index');
 $router->get('/blog/{slug}',  'BlogController@show');
 
+// نرخ لحظه‌ای ارز (دلار/درهم به تومان) — منبع: tgju.org
+$router->get('/api/rates',    'RatesController@index');
+
 // سئو: نقشه‌ی سایت و robots
 $router->get('/sitemap.xml', 'SitemapController@index');
 $router->get('/robots.txt',  'SitemapController@robots');

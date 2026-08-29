@@ -14,6 +14,27 @@
 .topbar__links a { color: #fff; opacity: .92; }
 .topbar__links a:hover { opacity: 1; }
 
+/* --- باکس نرخ لحظه‌ای ارز (تیکر داخل نوار بالایی) --- */
+.rate-ticker { display: flex; align-items: center; gap: 8px; direction: rtl; }
+.rate-ticker__unit { opacity: .7; font-size: 10.5px; }
+.rate-pill {
+    display: inline-flex; align-items: baseline; gap: 5px;
+    padding: 2px 9px; border-radius: 999px;
+    background: rgba(255, 255, 255, .14);
+    white-space: nowrap; line-height: 1.7;
+}
+.rate-pill__label { opacity: .9; font-size: 11px; }
+.rate-pill__val { font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .2px; }
+.rate-pill__chg { font-size: 10px; font-variant-numeric: tabular-nums; }
+.rate-pill__chg--up   { color: #8cffc1; }
+.rate-pill__chg--down { color: #ffb3b3; }
+.rate-ticker.is-stale { opacity: .6; }
+@media (max-width: 560px) {
+    .rate-pill__chg { display: none; }        /* در موبایل فقط عدد */
+    .rate-ticker__unit { display: none; }
+    .topbar__inner { flex-wrap: wrap; height: auto; min-height: 36px; padding-block: 4px; gap: 8px 10px; }
+}
+
 .header-main {
     display: flex; align-items: center; gap: 12px;
     padding-top: 12px; padding-bottom: 12px;
