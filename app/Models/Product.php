@@ -181,10 +181,13 @@ class Product extends Model
         // نامک برند هم بررسی می‌شود چون کاربر ایرانی ممکن است نام برند را
         // انگلیسی تایپ کند («samsung» به‌جای «سامسونگ»).
         if (!empty($filters['q'])) {
-            $joins  .= ' LEFT JOIN brands sb ON sb.id = p.brand_id';
-            $where[] = '(p.name LIKE ? OR sb.name LIKE ? OR sb.slug LIKE ? OR p.sku LIKE ?)';
-            $term    = '%' . $filters['q'] . '%';
-            $params  = array_merge($params, [$term, $term, $term, $term]);
+            $joins .= ' LEFT JOIN brands sb ON sb.id = p.brand_id';
+            [$clause, $qParams] = self::searchClause(
+                (string) $filters['q'],
+                ['p.name', 'sb.name', 'sb.slug', 'p.sku', 'p.short_description']
+            );
+            $where[] = $clause;
+            $params  = array_merge($params, $qParams);
         }
 
         // ویژگی‌ها (رنگ، حافظه و ...) — محصول باید همه گروه‌های انتخاب‌شده را داشته باشد
@@ -207,6 +210,81 @@ class Product extends Model
             'params' => $params,
             'joins'  => $joins,
         ];
+    }
+
+    /**
+     * شکستن عبارت جستجو به کلمه‌ها (با یکسان‌سازی حروف عربی/فارسی و ارقام).
+     * حداکثر ۶ کلمه تا کوئری سبک بماند.
+     *
+     * @return string[]
+     */
+    private static function searchTokens(string $q): array
+    {
+        $q = search_normalize($q);
+        if ($q === '') {
+            return [];
+        }
+        $tokens = preg_split('/\s+/u', $q) ?: [];
+        return array_slice(array_values(array_filter($tokens, static fn ($t) => $t !== '')), 0, 6);
+    }
+
+    /**
+     * یکسان‌سازیِ ستون دیتابیس هم‌تراز با search_normalize، تا حروف عربی/فارسی،
+     * نیم‌فاصله و ارقام فارسی/انگلیسی در هر دو طرفِ مقایسه یکسان شوند.
+     * (روی این حجمِ کم، این تعداد REPLACE کاملاً سریع است و به ایندکس نیازی نیست.)
+     */
+    private static function normalizeExpr(string $col): string
+    {
+        static $map = [
+            // حروف عربی → فارسی
+            'ي' => 'ی', 'ك' => 'ک', 'أ' => 'ا', 'إ' => 'ا', 'آ' => 'ا', 'ٱ' => 'ا',
+            'ة' => 'ه', 'ۀ' => 'ه',
+            // نیم‌فاصله حذف شود
+            "\u{200c}" => '',
+            // ارقام فارسی/عربی → انگلیسی
+            '۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4',
+            '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9',
+            '٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
+            '٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
+        ];
+
+        $expr = $col;
+        foreach ($map as $from => $to) {
+            $expr = "REPLACE({$expr}, '{$from}', '{$to}')";
+        }
+        return $expr;
+    }
+
+    /**
+     * ساخت شرط جستجوی چندکلمه‌ای:
+     *   هر کلمه باید در یکی از ستون‌ها پیدا شود (AND بین کلمه‌ها، OR بین ستون‌ها).
+     * این یعنی لازم نیست کاربر کل عبارت را دقیق تایپ کند؛ چند کلمهٔ پراکنده هم کافی است.
+     *
+     * @param  string[] $cols ستون‌های قابل جستجو
+     * @return array{0:string,1:array}  [شرط SQL، پارامترها]
+     */
+    private static function searchClause(string $q, array $cols): array
+    {
+        $tokens = self::searchTokens($q);
+        if ($tokens === []) {
+            return ['1', []];
+        }
+
+        $exprs    = array_map([self::class, 'normalizeExpr'], $cols);
+        $andParts = [];
+        $params   = [];
+
+        foreach ($tokens as $tok) {
+            $like    = '%' . $tok . '%';
+            $orParts = [];
+            foreach ($exprs as $expr) {
+                $orParts[] = $expr . ' LIKE ?';
+                $params[]  = $like;
+            }
+            $andParts[] = '(' . implode(' OR ', $orParts) . ')';
+        }
+
+        return ['(' . implode(' AND ', $andParts) . ')', $params];
     }
 
     /**
@@ -286,17 +364,20 @@ class Product extends Model
      */
     public static function suggest(string $term, int $limit = 8): array
     {
-        $like = '%' . $term . '%';
+        [$clause, $params] = self::searchClause(
+            $term,
+            ['p.name', 'b.name', 'b.slug', 'p.sku', 'p.short_description']
+        );
 
         return Database::fetchAll(
             'SELECT p.id, p.name, p.slug, p.price, p.main_image
                FROM products p
                LEFT JOIN brands b ON b.id = p.brand_id
               WHERE p.is_active = 1
-                AND (p.name LIKE ? OR b.name LIKE ? OR b.slug LIKE ? OR p.sku LIKE ?)
+                AND ' . $clause . '
               ORDER BY p.sold_count DESC, p.created_at DESC
               LIMIT ' . (int) $limit,
-            [$like, $like, $like, $like]
+            $params
         );
     }
 
@@ -339,9 +420,12 @@ class Product extends Model
         $params = [];
 
         if (!empty($filters['q'])) {
-            $where[] = '(p.name LIKE ? OR p.sku LIKE ?)';
-            $term    = '%' . $filters['q'] . '%';
-            $params  = array_merge($params, [$term, $term]);
+            [$clause, $qParams] = self::searchClause(
+                (string) $filters['q'],
+                ['p.name', 'p.sku']
+            );
+            $where[] = $clause;
+            $params  = array_merge($params, $qParams);
         }
 
         if (!empty($filters['category_id'])) {
