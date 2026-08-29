@@ -163,14 +163,43 @@ if ($active['in_stock']) {
                     </details>
                 <?php endforeach; ?>
 
+                <?php
+                    $pMin   = (int) floor($priceRange['min'] ?? 0);
+                    $pMax   = (int) ceil($priceRange['max'] ?? 0);
+                    $curMin = $active['min_price'] ?: $pMin;
+                    $curMax = $active['max_price'] ?: $pMax;
+                ?>
                 <details class="filter-group" open>
                     <summary><h3>محدوده قیمت (تومان)</h3></summary>
                     <div class="filter-group__body">
+                        <?php if ($pMax > $pMin): ?>
+                            <!-- اسلایدر دو‌سرِ کشویی قیمت (جاوااسکریپت خالص) -->
+                            <div class="price-slider" data-price-slider
+                                 data-min="<?= $pMin ?>" data-max="<?= $pMax ?>">
+                                <div class="price-slider__track">
+                                    <div class="price-slider__fill"></div>
+                                </div>
+                                <input type="range" class="price-slider__range price-slider__range--min"
+                                       min="<?= $pMin ?>" max="<?= $pMax ?>" value="<?= (int) $curMin ?>"
+                                       aria-label="کمترین قیمت">
+                                <input type="range" class="price-slider__range price-slider__range--max"
+                                       min="<?= $pMin ?>" max="<?= $pMax ?>" value="<?= (int) $curMax ?>"
+                                       aria-label="بیشترین قیمت">
+                            </div>
+                            <div class="price-slider__values">
+                                <span data-price-label-min><?= e(money($curMin, false)) ?></span>
+                                <span>تا</span>
+                                <span data-price-label-max><?= e(money($curMax, false)) ?></span>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="price-inputs">
                             <input type="text" name="min_price" inputmode="numeric" placeholder="از"
-                                   value="<?= $active['min_price'] ? e((string) $active['min_price']) : '' ?>">
+                                   value="<?= $active['min_price'] ? e((string) $active['min_price']) : '' ?>"
+                                   data-price-input-min>
                             <input type="text" name="max_price" inputmode="numeric" placeholder="تا"
-                                   value="<?= $active['max_price'] ? e((string) $active['max_price']) : '' ?>">
+                                   value="<?= $active['max_price'] ? e((string) $active['max_price']) : '' ?>"
+                                   data-price-input-max>
                         </div>
                         <?php if ($priceRange['max'] > 0): ?>
                             <span class="filter-hint">

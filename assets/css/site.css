@@ -382,6 +382,60 @@
 }
 .filter-hint { display: block; margin-top: 7px; font-size: 11.5px; color: var(--muted); }
 
+/* ---- اسلایدر دو‌سرِ کشویی قیمت ---- */
+.price-slider {
+    position: relative;
+    height: 30px;
+    margin: 4px 8px 8px;
+    direction: ltr; /* محور عددی از چپ (ارزان) به راست (گران) */
+}
+.price-slider__track {
+    position: absolute;
+    inset-block-start: 50%; inset-inline: 0;
+    height: 5px; transform: translateY(-50%);
+    background: var(--line);
+    border-radius: 999px;
+}
+.price-slider__fill {
+    position: absolute;
+    inset-block: 0;
+    background: var(--brand);
+    border-radius: 999px;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--brand) 45%, transparent);
+}
+/* هر دو ورودی روی هم قرار می‌گیرند؛ فقط دستگیره‌ها فعال‌اند */
+.price-slider__range {
+    position: absolute;
+    inset-block-start: 0; inset-inline-start: 0;
+    width: 100%; height: 30px; margin: 0; padding: 0;
+    background: none; pointer-events: none;
+    -webkit-appearance: none; appearance: none;
+}
+.price-slider__range--min { z-index: 3; }
+.price-slider__range--max { z-index: 4; }
+.price-slider__range:focus { outline: none; }
+.price-slider__range::-webkit-slider-runnable-track { background: none; border: none; }
+.price-slider__range::-moz-range-track { background: none; border: none; }
+.price-slider__range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--surface); border: 3px solid var(--brand);
+    cursor: pointer; pointer-events: auto;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
+}
+.price-slider__range::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--surface); border: 3px solid var(--brand);
+    cursor: pointer; pointer-events: auto;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .3);
+}
+.price-slider__values {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 6px; margin-bottom: 10px;
+    font-size: 12.5px; font-weight: 600; color: var(--ink);
+}
+.price-slider__values span:nth-child(2) { font-weight: 400; color: var(--muted); }
+
 .filter-actions { display: flex; flex-direction: column; gap: 8px; padding-top: 14px; }
 
 /* ---- صفحه‌بندی ---- */
