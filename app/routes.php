@@ -127,6 +127,9 @@ $router->get('/admin/products/{id}/edit',   'Admin\ProductController@edit');
 $router->post('/admin/products/{id}',       'Admin\ProductController@update');
 $router->post('/admin/products/{id}/delete','Admin\ProductController@destroy');
 
+// --- آپلود رسانه برای ویرایشگر توضیحات (درج عکس/ویدیو در متن) ---
+$router->post('/admin/media/upload', 'Admin\MediaController@upload');
+
 // --- برندها ---
 $router->get('/admin/brands',             'Admin\BrandController@index');
 $router->get('/admin/brands/create',      'Admin\BrandController@create');

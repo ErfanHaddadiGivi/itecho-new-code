@@ -65,7 +65,7 @@ class ProductController extends Controller
             'brands'     => Brand::all('sort_order, name'),
             'attributes' => Attribute::allWithValues(),
             'errors'     => Flash::errors(),
-            'scripts'    => ['admin-product.js'],
+            'scripts'    => ['admin-product.js', 'admin-editor.js'],
         ], 'admin');
     }
 
@@ -94,7 +94,7 @@ class ProductController extends Controller
             'brands'     => Brand::all('sort_order, name'),
             'attributes' => Attribute::allWithValues(),
             'errors'     => Flash::errors(),
-            'scripts'    => ['admin-product.js'],
+            'scripts'    => ['admin-product.js', 'admin-editor.js'],
         ], 'admin');
     }
 

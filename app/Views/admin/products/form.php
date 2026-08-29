@@ -108,8 +108,13 @@ $value = static function (string $field, mixed $fallback = '') use ($product) {
 
         <div class="field">
             <label for="description">توضیحات کامل</label>
-            <textarea id="description" name="description" rows="7"><?= e((string) $value('description')) ?></textarea>
-            <span class="field__hint">می‌توانید از تگ‌های ساده HTML مثل &lt;p&gt; و &lt;ul&gt; استفاده کنید.</span>
+            <textarea id="description" name="description" rows="9"
+                      data-editor data-upload-url="<?= e(url('admin/media/upload')) ?>"
+            ><?= e((string) $value('description')) ?></textarea>
+            <span class="field__hint">
+                با دکمه‌های بالای این کادر می‌توانید عکس و ویدیو آپلود و در متن درج کنید.
+                همچنین می‌توانید از تگ‌های ساده HTML مثل &lt;p&gt; و &lt;ul&gt; استفاده کنید.
+            </span>
         </div>
     </section>
 

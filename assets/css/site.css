@@ -485,6 +485,15 @@
 .panel-block h2 { font-size: 16px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line-soft); }
 .rich-text { line-height: 2.1; }
 .rich-text ul { list-style: disc; padding-inline-start: 22px; }
+/* رسانه‌های درج‌شده در توضیحات محصول همیشه واکنش‌گرا بمانند */
+.rich-text img,
+.rich-text video {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    display: block;
+    margin: 14px auto;
+}
 
 .spec-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .spec-table th, .spec-table td {

@@ -209,6 +209,29 @@ body.centered-page {
     background: var(--surface); color: var(--ink);
 }
 
+/* ---- ویرایشگر توضیحات (نوار ابزار درج عکس/ویدیو) ---- */
+.editor-toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    padding: 8px; margin-bottom: -1px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+.editor-toolbar__sep {
+    width: 1px; align-self: stretch; margin: 2px 4px;
+    background: var(--line);
+}
+.editor-btn { white-space: nowrap; }
+.editor-btn[disabled] { opacity: .55; cursor: progress; }
+.editor-status {
+    font-size: 12.5px; color: var(--muted); margin-inline-start: auto; padding-inline: 4px;
+}
+.editor-status--error { color: var(--danger); }
+/* وقتی نوار ابزار بالای textarea است، گوشه‌های بالای کادر صاف شود */
+.editor-toolbar + textarea {
+    border-top-left-radius: 0; border-top-right-radius: 0;
+}
+
 /* ---- تنوع محصول ---- */
 .variants__table { min-width: 520px; }
 .variants__table input {
