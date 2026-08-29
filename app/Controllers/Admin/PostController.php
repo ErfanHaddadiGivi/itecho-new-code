@@ -22,13 +22,26 @@ class PostController extends Controller
 
         $this->view('admin/posts/index', [
             'title' => 'مجله آیتکو',
+            'ready' => Post::tableReady(),
             'posts' => Post::allForAdmin(),
         ], 'admin');
+    }
+
+    /**
+     * اگر جدول مطالب ساخته نشده باشد، به‌جای خطا کاربر را با پیام راهنمایی می‌کنیم.
+     */
+    private function ensureTable(): void
+    {
+        if (!Post::tableReady()) {
+            Flash::error('ابتدا فایل database/content-update.sql را در دیتابیس ایمپورت کنید تا بخش مجله فعال شود.');
+            redirect('admin/posts');
+        }
     }
 
     public function create(): void
     {
         Auth::requireAdmin();
+        $this->ensureTable();
 
         $this->view('admin/posts/form', [
             'title'  => 'افزودن مطلب',
@@ -41,6 +54,7 @@ class PostController extends Controller
     {
         Auth::requireAdmin();
         Csrf::check();
+        $this->ensureTable();
 
         $data   = $this->readForm();
         $errors = $this->validate($data);
@@ -74,6 +88,7 @@ class PostController extends Controller
     public function edit(string $id): void
     {
         Auth::requireAdmin();
+        $this->ensureTable();
 
         $post = Post::find((int) $id);
         if ($post === null) {
@@ -91,6 +106,7 @@ class PostController extends Controller
     {
         Auth::requireAdmin();
         Csrf::check();
+        $this->ensureTable();
 
         $postId = (int) $id;
         $post   = Post::find($postId);

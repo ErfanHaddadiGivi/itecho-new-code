@@ -11,11 +11,30 @@ class Post extends Model
 {
     protected static string $table = 'posts';
 
+    /** آیا جدول posts ساخته شده؟ (تا نبودِ مایگریشن به‌جای خطای ۵۰۰، حالت خالی نشان دهد) */
+    private static ?bool $ready = null;
+
+    public static function tableReady(): bool
+    {
+        if (self::$ready !== null) {
+            return self::$ready;
+        }
+        try {
+            Database::fetchValue('SELECT 1 FROM posts LIMIT 1');
+            return self::$ready = true;
+        } catch (\PDOException $e) {
+            return self::$ready = false;
+        }
+    }
+
     /**
      * مطالب منتشرشده برای نمایش عمومی (صفحه‌بندی‌شده)
      */
     public static function published(int $limit, int $offset): array
     {
+        if (!self::tableReady()) {
+            return [];
+        }
         return Database::fetchAll(
             'SELECT id, title, slug, excerpt, cover_image, published_at, views
                FROM posts
@@ -30,6 +49,9 @@ class Post extends Model
      */
     public static function publishedCount(): int
     {
+        if (!self::tableReady()) {
+            return 0;
+        }
         return (int) Database::fetchValue('SELECT COUNT(*) FROM posts WHERE is_published = 1');
     }
 
@@ -38,6 +60,9 @@ class Post extends Model
      */
     public static function publishedBySlug(string $slug): ?array
     {
+        if (!self::tableReady()) {
+            return null;
+        }
         return Database::fetch(
             'SELECT * FROM posts WHERE slug = ? AND is_published = 1 LIMIT 1',
             [$slug]
@@ -49,6 +74,9 @@ class Post extends Model
      */
     public static function latest(int $limit = 3): array
     {
+        if (!self::tableReady()) {
+            return [];
+        }
         return Database::fetchAll(
             'SELECT id, title, slug, cover_image, published_at
                FROM posts
@@ -71,6 +99,9 @@ class Post extends Model
      */
     public static function allForAdmin(): array
     {
+        if (!self::tableReady()) {
+            return [];
+        }
         return Database::fetchAll(
             'SELECT id, title, slug, cover_image, is_published, published_at, views, created_at
                FROM posts
