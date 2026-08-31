@@ -603,11 +603,51 @@
 .buy-actions .btn { flex: 1; min-width: 170px; }
 .buy-note { margin: 0; font-size: 12.5px; color: var(--muted); }
 
+/* نوار شورتکاتِ بخش‌های محصول — چسبان زیر هدر، پرش نرم به بخش‌ها */
+.product-nav {
+    position: sticky; top: var(--header-h, 60px); z-index: 20;
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 16px; padding: 8px;
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+.product-nav__link {
+    padding: 7px 14px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    white-space: nowrap; transition: background .15s ease, color .15s ease;
+}
+.product-nav__link:hover { background: var(--brand-soft); color: var(--brand); text-decoration: none; }
+.product-nav__link.is-active {
+    background: var(--brand); color: #fff;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--brand) 45%, transparent);
+}
+@media (max-width: 600px) {
+    .product-nav { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .product-nav::-webkit-scrollbar { display: none; }
+}
+
+/* هر بخش هنگام پرش، کمی پایین‌تر از هدرِ چسبان بایستد */
+.panel-block[id], .section[id] { scroll-margin-top: calc(var(--header-h, 60px) + 74px); }
+
 .panel-block {
+    position: relative;
     background: var(--surface); border: 1px solid var(--line);
     border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    box-shadow: var(--shadow);
 }
-.panel-block h2 { font-size: 16px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line-soft); }
+.panel-block h2 {
+    font-size: 16px; margin-bottom: 14px; padding-bottom: 10px;
+    padding-inline-start: 12px; position: relative;
+    border-bottom: 1px solid var(--line-soft);
+}
+.panel-block h2::before {
+    content: ""; position: absolute; inset-inline-start: 0; top: 1px; bottom: 9px;
+    width: 4px; border-radius: 3px;
+    background: linear-gradient(var(--brand), var(--accent));
+    box-shadow: 0 0 10px color-mix(in srgb, var(--brand) 55%, transparent);
+}
 .rich-text { line-height: 2.1; }
 .rich-text ul { list-style: disc; padding-inline-start: 22px; }
 /* رسانه‌های درج‌شده در توضیحات محصول همیشه واکنش‌گرا بمانند */
@@ -1385,4 +1425,48 @@ details.filter-group[open] > summary::after { transform: rotate(-135deg); margin
 .filters-toggle__dot {
     display: inline-block; width: 7px; height: 7px; border-radius: 50%;
     background: var(--accent); margin-inline-start: 5px; vertical-align: middle;
+}
+
+/* =====================================================================
+   رنگ‌ولعاب: پس‌زمینهٔ زندهٔ صفحه + کارت‌های کمی رنگی
+   (همه با متغیرهای رنگ برند، پس با تمِ انتخابیِ مدیر هماهنگ می‌مانند)
+   ===================================================================== */
+body {
+    background:
+        radial-gradient(1200px 560px at 100% -4%, color-mix(in srgb, var(--brand) 18%, transparent), transparent 60%),
+        radial-gradient(1000px 520px at -6% 3%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 58%),
+        radial-gradient(900px 700px at 108% 55%, color-mix(in srgb, var(--brand) 9%, transparent), transparent 60%),
+        var(--bg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* بخش‌های سفید کمی از زمینه جدا و زنده‌تر شوند */
+.section--alt {
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--brand) 7%, var(--surface)), var(--surface));
+}
+
+/* کارت دسته‌بندی: ته‌رنگ ملایم برند + نوار رنگی پایین هنگام هاور */
+.category-card {
+    background: linear-gradient(158deg, color-mix(in srgb, var(--brand) 10%, var(--surface)), var(--surface) 62%);
+    position: relative; overflow: hidden;
+}
+.category-card::after {
+    content: ""; position: absolute; inset-inline: 0; inset-block-end: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
+    transform: scaleX(0); transform-origin: inline-start;
+    transition: transform .22s ease;
+}
+.category-card:hover::after { transform: scaleX(1); }
+
+/* کارت محصول: ته‌رنگ خیلی ملایم تا روی زمینه شناور به‌نظر برسد */
+.product-card {
+    background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--brand) 5%, var(--surface)));
+}
+.product-card__media { background: color-mix(in srgb, var(--brand) 5%, var(--line-soft)); }
+
+/* جعبهٔ خرید و پنل‌ها: هالهٔ نرم تا از زمینه بلند شوند */
+.buy-box, .panel-block, .filters {
+    box-shadow: 0 1px 2px rgba(22, 33, 28, .05), 0 14px 30px -22px color-mix(in srgb, var(--brand) 55%, rgba(22,33,28,.5));
 }

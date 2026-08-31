@@ -96,3 +96,65 @@
         });
     }
 })();
+
+/* =====================================================================
+   شورتکات بخش‌های صفحه محصول: پرش نرم + برجسته‌سازی بخش فعال.
+   همچنین ارتفاع هدرِ چسبان را در متغیر CSS می‌ریزد تا نوار شورتکات درست
+   زیر هدر بایستد.
+   ===================================================================== */
+(function () {
+    'use strict';
+
+    var header = document.querySelector('.site-header');
+
+    function setHeaderVar() {
+        if (header) {
+            document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+        }
+    }
+    setHeaderVar();
+    window.addEventListener('resize', setHeaderVar);
+    window.addEventListener('load', setHeaderVar);
+
+    var nav = document.querySelector('.product-nav');
+    if (!nav) { return; }
+
+    var links = Array.prototype.slice.call(nav.querySelectorAll('.product-nav__link'));
+
+    function offset() {
+        return (header ? header.offsetHeight : 0) + nav.offsetHeight + 16;
+    }
+
+    // پرش نرم هنگام کلیک روی شورتکات
+    links.forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            var hash = link.getAttribute('href') || '';
+            if (hash.charAt(0) !== '#') { return; }
+            var target = document.querySelector(hash);
+            if (!target) { return; }
+            e.preventDefault();
+            var y = target.getBoundingClientRect().top + window.pageYOffset - offset();
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        });
+    });
+
+    // برجسته‌سازی بخشِ در حال دیدن (scroll-spy)
+    var sections = links
+        .map(function (l) { return document.getElementById((l.getAttribute('href') || '').slice(1)); })
+        .filter(Boolean);
+
+    function setActive(id) {
+        links.forEach(function (l) {
+            l.classList.toggle('is-active', l.getAttribute('href') === '#' + id);
+        });
+    }
+
+    if ('IntersectionObserver' in window && sections.length) {
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) { setActive(en.target.id); }
+            });
+        }, { rootMargin: '-' + (offset() + 20) + 'px 0px -55% 0px', threshold: 0 });
+        sections.forEach(function (s) { io.observe(s); });
+    }
+})();

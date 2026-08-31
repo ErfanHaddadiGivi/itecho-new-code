@@ -213,15 +213,29 @@ $inStock = (int) $product['stock'] > 0;
 
     <!-- توضیحات و مشخصات -->
     <div class="product-tabs">
+        <!-- شورتکات‌های پرش به بخش‌ها (با کلیک، صفحه نرم اسکرول می‌شود) -->
+        <nav class="product-nav" aria-label="بخش‌های محصول">
+            <?php if ($product['description']): ?>
+                <a class="product-nav__link" href="#desc">توضیحات</a>
+            <?php endif; ?>
+            <?php if ($product['specs']): ?>
+                <a class="product-nav__link" href="#specs">مشخصات فنی</a>
+            <?php endif; ?>
+            <a class="product-nav__link" href="#reviews">نظرات کاربران</a>
+            <?php if ($related): ?>
+                <a class="product-nav__link" href="#related">محصولات مشابه</a>
+            <?php endif; ?>
+        </nav>
+
         <?php if ($product['description']): ?>
-            <section class="panel-block">
+            <section class="panel-block" id="desc">
                 <h2>توضیحات</h2>
                 <div class="rich-text"><?= $product['description'] ?></div>
             </section>
         <?php endif; ?>
 
         <?php if ($product['specs']): ?>
-            <section class="panel-block">
+            <section class="panel-block" id="specs">
                 <h2>مشخصات فنی</h2>
                 <table class="spec-table">
                     <tbody>
@@ -333,7 +347,7 @@ $inStock = (int) $product['stock'] > 0;
     </div>
 
     <?php if ($related): ?>
-        <section class="section">
+        <section class="section" id="related">
             <div class="section__head"><h2>محصولات مشابه</h2></div>
             <div class="product-grid">
                 <?php foreach ($related as $item): ?>
