@@ -14,25 +14,60 @@
 .topbar__links a { color: #fff; opacity: .92; }
 .topbar__links a:hover { opacity: 1; }
 
-/* --- باکس نرخ لحظه‌ای ارز (تیکر داخل نوار بالایی) --- */
-.rate-ticker { display: flex; align-items: center; gap: 8px; direction: rtl; }
-.rate-ticker__unit { opacity: .7; font-size: 10.5px; }
-.rate-pill {
-    display: inline-flex; align-items: baseline; gap: 5px;
-    padding: 2px 9px; border-radius: 999px;
-    background: rgba(255, 255, 255, .14);
-    white-space: nowrap; line-height: 1.7;
+/* --- باکس شناور نرخ لحظه‌ای ارز (گوشهٔ چپ‌پایین صفحه) --- */
+.rate-box {
+    position: fixed; left: 16px; bottom: 16px; z-index: 55;
+    width: 216px; max-width: calc(100vw - 32px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .38);
+    overflow: hidden; direction: rtl;
+    animation: rate-box-in .35s ease both;
 }
-.rate-pill__label { opacity: .9; font-size: 11px; }
-.rate-pill__val { font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: .2px; }
-.rate-pill__chg { font-size: 10px; font-variant-numeric: tabular-nums; }
-.rate-pill__chg--up   { color: #8cffc1; }
-.rate-pill__chg--down { color: #ffb3b3; }
-.rate-ticker.is-stale { opacity: .6; }
-@media (max-width: 560px) {
-    .rate-pill__chg { display: none; }        /* در موبایل فقط عدد */
-    .rate-ticker__unit { display: none; }
-    .topbar__inner { flex-wrap: wrap; height: auto; min-height: 36px; padding-block: 4px; gap: 8px 10px; }
+@keyframes rate-box-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.rate-box__head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 12px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff;
+}
+.rate-box__title { font-weight: 800; font-size: 12.5px; letter-spacing: .2px; }
+.rate-box__live {
+    width: 8px; height: 8px; border-radius: 50%; background: #7cffb2;
+    margin-inline-start: auto;
+    animation: rate-live 1.8s ease-out infinite;
+}
+@keyframes rate-live {
+    0%   { box-shadow: 0 0 0 0 rgba(124, 255, 178, .6); }
+    70%  { box-shadow: 0 0 0 7px rgba(124, 255, 178, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(124, 255, 178, 0); }
+}
+
+.rate-box__list { list-style: none; margin: 0; padding: 5px; }
+.rate-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 9px; border-radius: 9px;
+}
+.rate-row + .rate-row { border-top: 1px solid var(--line-soft); }
+.rate-row__label { font-weight: 700; color: var(--ink); min-width: 34px; }
+.rate-row__value { margin-inline-start: auto; display: inline-flex; align-items: baseline; gap: 4px; }
+.rate-row__num { font-weight: 800; font-size: 14px; font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+.rate-row__unit { font-size: 10.5px; color: var(--muted); }
+.rate-row__chg { font-size: 11px; font-variant-numeric: tabular-nums; min-width: 44px; text-align: left; }
+.rate-row__chg--up   { color: #17915b; }
+.rate-row__chg--down { color: #d23b3b; }
+
+.rate-box__foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 12px 9px; font-size: 10px; color: var(--muted);
+}
+.rate-box__src { opacity: .85; }
+.rate-box.is-stale { opacity: .82; }
+@media (max-width: 480px) {
+    .rate-box { width: 182px; left: 10px; bottom: 10px; }
+    .rate-row__unit { display: none; }
 }
 
 .header-main {
@@ -502,7 +537,22 @@
     display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
     font-size: 13px; color: var(--muted); margin-bottom: 14px;
 }
-.product-info__short { color: var(--muted); font-size: 14px; }
+/* توضیح کوتاه محصول — کادر تمیز با نوار رنگی برند */
+.short-desc {
+    display: flex; align-items: flex-start; gap: 10px;
+    margin: 2px 0 4px;
+    padding: 12px 14px;
+    background: var(--brand-soft);
+    border: 1px solid var(--line);
+    border-inline-start: 3px solid var(--brand);
+    border-radius: 12px;
+}
+.short-desc__icon {
+    flex-shrink: 0; color: var(--brand); line-height: 0; margin-top: 1px;
+}
+.short-desc__text {
+    margin: 0; color: var(--ink); font-size: 14px; line-height: 2;
+}
 
 .badge--new  { background: var(--brand-soft); color: var(--brand); }
 .badge--used { background: var(--accent-soft); color: var(--accent); }

@@ -12,11 +12,21 @@
     var endpoint = box.getAttribute('data-endpoint');
     if (!endpoint) { return; }
 
-    var REFRESH_MS = 5 * 60 * 1000; // هر ۵ دقیقه
+    var REFRESH_MS = 60 * 60 * 1000; // هر ۱ ساعت
+
+    var timeEl = box.querySelector('[data-rate-time]');
 
     function faNum(n) {
         try { return Number(n).toLocaleString('fa-IR'); }
         catch (e) { return String(n); }
+    }
+
+    function faTime(unix) {
+        if (!unix) { return ''; }
+        try {
+            var d = new Date(unix * 1000);
+            return 'به‌روزرسانی ' + d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+        } catch (e) { return ''; }
     }
 
     function apply(data) {
@@ -42,6 +52,7 @@
             }
         });
 
+        if (timeEl) { timeEl.textContent = faTime(data.updated_at); }
         box.classList.toggle('is-stale', !!data.stale);
     }
 

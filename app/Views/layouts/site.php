@@ -85,7 +85,6 @@ $jsonLd = $jsonLd ?? '';
     <div class="topbar">
         <div class="container topbar__inner">
             <span class="topbar__note">ارسال به سراسر ایران · ضمانت اصالت کالا</span>
-            <?php App\Core\View::partial('site/partials/rate-box'); ?>
             <div class="topbar__links">
                 <a href="<?= e(url('blog')) ?>">مجله آیتکو</a>
                 <a href="<?= e(url('page/contact')) ?>">تماس با ما</a>
@@ -269,6 +268,8 @@ $jsonLd = $jsonLd ?? '';
 </footer>
 
 <?php
+// باکس شناور نرخ لحظه‌ای ارز (چپ‌پایین صفحه)
+App\Core\View::partial('site/partials/rate-box');
 // ویجت تماس چسبان و پاپ‌آپ مشاوره (هر دو از تنظیمات قابل ویرایش‌اند)
 App\Core\View::partial('site/partials/contact-widget');
 App\Core\View::partial('site/partials/consult-popup');
