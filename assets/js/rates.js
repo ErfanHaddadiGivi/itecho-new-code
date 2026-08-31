@@ -16,6 +16,28 @@
 
     var timeEl = box.querySelector('[data-rate-time]');
 
+    /* --- کوچک/بزرگ کردن باکس (وضعیت در مرورگر کاربر ذخیره می‌شود) --- */
+    var head = box.querySelector('[data-rate-toggle]');
+    if (head) {
+        var STORE = 'itecho_rates_collapsed';
+        try {
+            if (localStorage.getItem(STORE) === '1') {
+                box.classList.add('is-collapsed');
+                head.setAttribute('aria-expanded', 'false');
+            }
+        } catch (e) { /* بی‌خیال اگر localStorage نبود */ }
+
+        var toggle = function () {
+            var collapsed = box.classList.toggle('is-collapsed');
+            head.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            try { localStorage.setItem(STORE, collapsed ? '1' : '0'); } catch (e) {}
+        };
+        head.addEventListener('click', toggle);
+        head.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+        });
+    }
+
     function faNum(n) {
         try { return Number(n).toLocaleString('fa-IR'); }
         catch (e) { return String(n); }
@@ -42,7 +64,7 @@
             if (val) { val.textContent = faNum(it.toman); }
 
             if (chg) {
-                chg.className = 'rate-pill__chg rate-pill__chg--' + (it.dir || 'none');
+                chg.className = 'rate-row__chg rate-row__chg--' + (it.dir || 'none');
                 if (it.change && Math.abs(it.change) > 0) {
                     var arrow = it.dir === 'down' ? '▼' : '▲';
                     chg.textContent = arrow + ' ' + faNum(Math.abs(it.change).toFixed(2)) + '٪';

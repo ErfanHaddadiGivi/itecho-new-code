@@ -31,14 +31,18 @@
     display: flex; align-items: center; gap: 8px;
     padding: 9px 12px;
     background: linear-gradient(135deg, var(--brand), var(--brand-dark));
-    color: #fff;
+    color: #fff; cursor: pointer; user-select: none; -webkit-user-select: none;
 }
-.rate-box__title { font-weight: 800; font-size: 12.5px; letter-spacing: .2px; }
+.rate-box__title { font-weight: 800; font-size: 12.5px; letter-spacing: .2px; white-space: nowrap; }
 .rate-box__live {
     width: 8px; height: 8px; border-radius: 50%; background: #7cffb2;
     margin-inline-start: auto;
     animation: rate-live 1.8s ease-out infinite;
 }
+.rate-box__chevron { font-size: 11px; line-height: 1; transition: transform .2s ease; }
+.rate-box.is-collapsed .rate-box__chevron { transform: rotate(180deg); }
+.rate-box.is-collapsed .rate-box__body { display: none; }
+.rate-box.is-collapsed .rate-box__live { animation: none; }
 @keyframes rate-live {
     0%   { box-shadow: 0 0 0 0 rgba(124, 255, 178, .6); }
     70%  { box-shadow: 0 0 0 7px rgba(124, 255, 178, 0); }
@@ -65,9 +69,20 @@
 }
 .rate-box__src { opacity: .85; }
 .rate-box.is-stale { opacity: .82; }
-@media (max-width: 480px) {
-    .rate-box { width: 182px; left: 10px; bottom: 10px; }
+
+/* روی موبایل جمع‌وجورتر تا فضای صفحه را کمتر بگیرد */
+@media (max-width: 560px) {
+    .rate-box { width: 156px; left: 8px; bottom: 8px; border-radius: 12px; }
+    .rate-box__head { padding: 6px 10px; gap: 6px; }
+    .rate-box__title { font-size: 10.5px; letter-spacing: 0; }
+    .rate-box__live { width: 6px; height: 6px; }
+    .rate-box__list { padding: 3px; }
+    .rate-row { padding: 6px 7px; gap: 5px; }
+    .rate-row__label { min-width: 26px; font-size: 12px; white-space: nowrap; }
+    .rate-row__num { font-size: 12.5px; white-space: nowrap; }
     .rate-row__unit { display: none; }
+    .rate-row__chg { display: none; }    /* درصد تغییر فقط دسکتاپ؛ روی موبایل فقط عدد */
+    .rate-box__foot { display: none; }    /* صرفه‌جویی در ارتفاع */
 }
 
 .header-main {
