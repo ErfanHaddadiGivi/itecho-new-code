@@ -42,6 +42,9 @@ $heroCta      = Setting::get('hero_cta', 'شروع خرید');
     </div>
 <?php endif; ?>
 
+<!-- بنر تبلیغاتی (اختیاری، از پنل مدیریت) -->
+<?php App\Core\View::partial('site/partials/ad-banner'); ?>
+
 <!-- دسته‌بندی‌های اصلی -->
 <section class="section" id="categories">
     <div class="container">

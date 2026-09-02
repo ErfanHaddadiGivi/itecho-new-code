@@ -1486,3 +1486,19 @@ body {
 .buy-box, .panel-block, .filters {
     box-shadow: 0 1px 2px rgba(22, 33, 28, .05), 0 14px 30px -22px color-mix(in srgb, var(--brand) 55%, rgba(22,33,28,.5));
 }
+
+/* =====================================================================
+   بنر تبلیغاتی صفحه اصلی
+   ===================================================================== */
+.ad-banner {
+    display: block; margin: 20px 0; border-radius: var(--radius);
+    overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.ad-banner__img { width: 100%; height: auto; display: block; }
+a.ad-banner { transition: transform .15s ease, box-shadow .2s ease; }
+a.ad-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 40%, transparent),
+                0 16px 34px -16px color-mix(in srgb, var(--brand) 60%, rgba(0, 0, 0, .45));
+}
+@media (max-width: 600px) { .ad-banner { margin: 14px 0; border-radius: var(--radius-sm); } }
