@@ -664,7 +664,7 @@
     background: linear-gradient(var(--brand), var(--accent));
     box-shadow: 0 0 10px color-mix(in srgb, var(--brand) 55%, transparent);
 }
-.rich-text { line-height: 2.1; }
+.rich-text { line-height: 2.1; text-align: justify; text-align-last: right; }
 .rich-text ul { list-style: disc; padding-inline-start: 22px; }
 /* رسانه‌های درج‌شده در توضیحات محصول همیشه واکنش‌گرا بمانند */
 .rich-text img,
