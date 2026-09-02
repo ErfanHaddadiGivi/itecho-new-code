@@ -107,19 +107,6 @@ $inStock = (int) $product['stock'] > 0;
                 <?php endif; ?>
             </div>
 
-            <?php if ($product['short_description']): ?>
-                <div class="short-desc">
-                    <span class="short-desc__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="18" height="18">
-                            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                            <path d="M12 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                            <circle cx="12" cy="7.6" r="1.15" fill="currentColor"/>
-                        </svg>
-                    </span>
-                    <p class="short-desc__text"><?= e($product['short_description']) ?></p>
-                </div>
-            <?php endif; ?>
-
             <form class="buy-box" method="post" action="<?= e(url('cart/add')) ?>" id="buy-form"
                   data-variants="<?= e(json_encode($variantMap, JSON_UNESCAPED_UNICODE)) ?>">
                 <?= Csrf::field() ?>
@@ -203,6 +190,19 @@ $inStock = (int) $product['stock'] > 0;
             </form>
 
             <div class="buy-box-tail">
+
+                <?php if ($product['short_description']): ?>
+                    <div class="short-desc">
+                        <span class="short-desc__icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18">
+                                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M12 11v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                <circle cx="12" cy="7.6" r="1.15" fill="currentColor"/>
+                            </svg>
+                        </span>
+                        <p class="short-desc__text"><?= e($product['short_description']) ?></p>
+                    </div>
+                <?php endif; ?>
 
                 <?php if ($product['warranty']): ?>
                     <p class="buy-note">🛡 <?= e($product['warranty']) ?></p>
