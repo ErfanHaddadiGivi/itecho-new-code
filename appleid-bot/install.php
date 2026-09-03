@@ -83,6 +83,68 @@ function writeConfig(string $file, array $data): bool
     return file_put_contents($file, $php) !== false;
 }
 
+/**
+ * جدول‌هایی که برای کارکرد کامل ربات + پورتال وب لازم‌اند.
+ */
+function requiredTables(): array
+{
+    return [
+        'settings', 'admins', 'warranty_types', 'products', 'orders',
+        'partners', 'conversations', 'web_users', 'partner_ledger',
+        'audit_log', 'rate_limits',
+    ];
+}
+
+/**
+ * لیست جدول‌های لازم که هنوز ساخته نشده‌اند.
+ */
+function missingTables(PDO $pdo): array
+{
+    try {
+        $have = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Throwable $e) {
+        return requiredTables();
+    }
+    return array_values(array_diff(requiredTables(), $have));
+}
+
+/**
+ * تقسیم فایل SQL چند‌دستوری به دستورهای جدا.
+ * (کامنت‌های خطی -- و # حذف می‌شوند؛ در این schema هیچ «;» داخل مقدار نیست.)
+ */
+function splitSql(string $sql): array
+{
+    $clean = [];
+    foreach (preg_split('/\r\n|\r|\n/', $sql) as $line) {
+        $trim = ltrim($line);
+        if ($trim === '' || str_starts_with($trim, '--') || str_starts_with($trim, '#')) {
+            continue;
+        }
+        $clean[] = $line;
+    }
+    $parts = array_map('trim', explode(';', implode("\n", $clean)));
+    return array_values(array_filter($parts, static fn($s) => $s !== ''));
+}
+
+/**
+ * اجرای هر دستور SQL به‌صورت جداگانه (چون بعضی هاست‌ها PDO::exec چند‌دستوری
+ * را کامل اجرا نمی‌کنند). آرایهٔ خطاها را برمی‌گرداند (خالی = بی‌خطا).
+ * schema با CREATE TABLE IF NOT EXISTS و INSERT IGNORE نوشته شده، پس اجرای
+ * دوباره (تعمیر) امن و idempotent است.
+ */
+function execSql(PDO $pdo, string $sql): array
+{
+    $errors = [];
+    foreach (splitSql($sql) as $stmt) {
+        try {
+            $pdo->exec($stmt);
+        } catch (PDOException $e) {
+            $errors[] = $e->getMessage();
+        }
+    }
+    return $errors;
+}
+
 /* ------------------------- اجرای نصب ------------------------- */
 $result = null;
 if (!$installed && ($_POST['action'] ?? '') === 'install') {
@@ -127,11 +189,14 @@ if (!$installed && ($_POST['action'] ?? '') === 'install') {
             $encryptionKey = base64_encode(random_bytes(32));
             $setupPassword = bin2hex(random_bytes(5)); // ۱۰ کاراکتر، برای /claim
 
-            // اجرای schema
-            try {
-                $pdo->exec(file_get_contents($schemaFile));
-            } catch (PDOException $e) {
-                $result = ['ok' => false, 'msg' => 'ساخت جدول‌ها ناموفق بود: ' . $e->getMessage()];
+            // اجرای schema — هر دستور جداگانه (مقاوم در برابر هاست‌هایی که
+            // multi-statement را کامل اجرا نمی‌کنند)
+            $sqlErrors = execSql($pdo, (string) file_get_contents($schemaFile));
+            $missing   = missingTables($pdo);
+            if ($missing !== []) {
+                $result = ['ok' => false, 'msg' => 'ساخت این جدول‌ها ناموفق بود: '
+                    . implode('، ', $missing)
+                    . ($sqlErrors ? ' — علت: ' . $sqlErrors[0] : '')];
             }
 
             if ($result === null) {
@@ -175,6 +240,58 @@ if (!$installed && ($_POST['action'] ?? '') === 'install') {
     }
 }
 
+/* ------------------------- تعمیر (نصب ناقص) ------------------------- */
+// وقتی config هست ولی همهٔ جدول‌ها ساخته نشده یا رمز راه‌اندازی گم شده،
+// بدون حذف config جدول‌های ناقص را می‌سازد و رمز راه‌اندازی نو می‌دهد.
+if ($installed && ($_POST['action'] ?? '') === 'repair') {
+    $cfg = is_file($configFile) ? (require $configFile) : null;
+    if (!is_array($cfg) || !isset($cfg['db'])) {
+        $result = ['ok' => false, 'msg' => 'فایل config معتبر نیست.'];
+    } else {
+        try {
+            $d   = $cfg['db'];
+            $pdo = new PDO(
+                "mysql:host={$d['host']};dbname={$d['name']};charset=utf8mb4",
+                $d['user'], $d['pass'],
+                [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+            );
+            $sqlErrors = execSql($pdo, (string) file_get_contents($schemaFile));
+            $missing   = missingTables($pdo);
+            if ($missing !== []) {
+                $result = ['ok' => false, 'msg' => 'هنوز این جدول‌ها ساخته نشدند: '
+                    . implode('، ', $missing)
+                    . ($sqlErrors ? ' — علت: ' . $sqlErrors[0] : '')];
+            } else {
+                // رمز راه‌اندازی جدید برای /claim
+                $setupPassword = bin2hex(random_bytes(5));
+                $pdo->prepare('INSERT INTO settings (`key`, `value`) VALUES (?, ?)
+                               ON DUPLICATE KEY UPDATE `value` = VALUES(`value`)')
+                    ->execute(['admin_setup_password_hash', password_hash($setupPassword, PASSWORD_DEFAULT)]);
+
+                // ثبت دوبارهٔ وب‌هوک (اختیاری)
+                $hook = ['ok' => false, 'json' => null, 'error' => ''];
+                if (!empty($_POST['reset_webhook']) && trim((string) ($cfg['bot_token'] ?? '')) !== '') {
+                    $webhookUrl = trim((string) ($_POST['webhook_url'] ?? detectWebhookUrl()));
+                    $setUrl = rtrim((string) $cfg['api_base_url'], '/') . $cfg['bot_token'] . '/setWebhook';
+                    $hook   = curlPost($setUrl, ['url' => $webhookUrl . '?s=' . $cfg['webhook_secret']]);
+                }
+
+                $result = [
+                    'ok'            => true,
+                    'repair'        => true,
+                    'setupPassword' => $setupPassword,
+                    'webhookUrl'    => !empty($_POST['reset_webhook']) ? ($webhookUrl . '?s=' . $cfg['webhook_secret']) : '',
+                    'hookOk'        => $hook['ok'],
+                    'hookErr'       => $hook['json']['description'] ?? $hook['error'] ?? '',
+                    'apiBase'       => (string) ($cfg['api_base_url'] ?? ''),
+                ];
+            }
+        } catch (Throwable $e) {
+            $result = ['ok' => false, 'msg' => 'تعمیر ناموفق بود: ' . $e->getMessage()];
+        }
+    }
+}
+
 /* ------------------------- گزارش اعتبارسنجی (نصب‌شده) ------------------------- */
 function validationReport(string $configFile, string $schemaFile): array
 {
@@ -192,17 +309,20 @@ function validationReport(string $configFile, string $schemaFile): array
     }
     $out[] = ['اتصال دیتابیس', $pdo !== null];
 
-    $tablesOk = false; $adminCount = 0; $setupOpen = false;
+    $tablesOk = false; $adminCount = 0; $setupOpen = false; $missing = [];
     if ($pdo !== null) {
         try {
-            $need = ['settings','admins','warranty_types','products','orders','partners','conversations','web_users'];
-            $have = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
-            $tablesOk = count(array_intersect($need, $have)) === count($need);
+            $missing  = missingTables($pdo);
+            $tablesOk = $missing === [];
+        } catch (Throwable $e) {}
+        try {
             $adminCount = (int) $pdo->query('SELECT COUNT(*) FROM admins WHERE is_active=1')->fetchColumn();
+        } catch (Throwable $e) {}
+        try {
             $setupOpen = ((string) ($pdo->query("SELECT `value` FROM settings WHERE `key`='admin_setup_password_hash'")->fetchColumn() ?: '')) !== '';
         } catch (Throwable $e) {}
     }
-    $out[] = ['همهٔ جدول‌ها ساخته شده', $tablesOk];
+    $out[] = ['همهٔ جدول‌ها ساخته شده', $tablesOk, $tablesOk ? '' : ('ساخته‌نشده: ' . implode('، ', $missing))];
     $out[] = ['کلید رمزنگاری معتبر', is_array($cfg) && strlen((string) base64_decode((string) ($cfg['encryption_key'] ?? ''), true)) === 32];
     $out[] = ['توکن ربات تنظیم شده', is_array($cfg) && trim((string) ($cfg['bot_token'] ?? '')) !== ''];
     $out[] = ['حداقل یک ادمین فعال', $adminCount > 0];
@@ -210,7 +330,8 @@ function validationReport(string $configFile, string $schemaFile): array
     // وضعیت وب‌هوک (بدون افشای آدرس/راز)
     $hookSet = false;
     if (is_array($cfg) && trim((string) ($cfg['bot_token'] ?? '')) !== '') {
-        $info = curlPost(rtrim((string) $cfg['api_base_url'], '/') . $cfg['bot_token'] . '/getWebhookInfo', []);
+        $apiBase = rtrim((string) ($cfg['api_base_url'] ?? 'https://tapi.bale.ai/bot'), '/');
+        $info    = curlPost($apiBase . $cfg['bot_token'] . '/getWebhookInfo', []);
         $hookSet = $info['ok'] && !empty($info['json']['result']['url']);
     }
     $out[] = ['وب‌هوک ثبت شده', $hookSet];
@@ -254,21 +375,24 @@ $page = $result ?? null;
     <h1>🚀 نصب ربات اپل‌آیدی</h1>
     <p class="sub">نصب سریع و خودکار روی پیام‌رسان بله (سازگار با تلگرام)</p>
 
-<?php if ($page !== null && $page['ok']): /* موفقیت نصب */ ?>
-    <div class="alert alert--ok">✅ نصب با موفقیت انجام شد!</div>
+<?php if ($page !== null && $page['ok']): /* موفقیت نصب/تعمیر */ ?>
+    <?php $isRepair = !empty($page['repair']); ?>
+    <div class="alert alert--ok"><?= $isRepair ? '🔧 تعمیر انجام شد! جدول‌های ناقص ساخته شدند.' : '✅ نصب با موفقیت انجام شد!' ?></div>
 
-    <p><b>۱) ادمین شدن:</b> در بله به ربات این پیام را بفرست (رمز راه‌اندازی):</p>
+    <p><b>۱) ادمین شدن:</b> در بله به ربات این پیام را بفرست (رمز راه‌اندازی جدید):</p>
     <p class="code big">/claim <?= h($page['setupPassword']) ?></p>
 
+    <?php if (!$isRepair || !empty($page['webhookUrl'])): ?>
     <p><b>۲) وب‌هوک:</b>
         <?php if ($page['hookOk']): ?>
             <span class="ok">به‌صورت خودکار ثبت شد ✅</span>
-        <?php else: ?>
+        <?php elseif (!empty($page['webhookUrl'])): ?>
             <span class="bad">خودکار ثبت نشد ❌</span> — این آدرس را دستی در بله ثبت کن:<br>
             <span class="code"><?= h(rtrim($page['apiBase'],'/')) ?>&lt;TOKEN&gt;/setWebhook?url=<?= h($page['webhookUrl']) ?></span>
             <?php if ($page['hookErr']): ?><br><span class="muted">پیام: <?= h((string)$page['hookErr']) ?></span><?php endif; ?>
         <?php endif; ?>
     </p>
+    <?php endif; ?>
 
     <p><b>۳) قدم‌های بعدی:</b></p>
     <ol>
@@ -289,7 +413,18 @@ $page = $result ?? null;
             <?php if (!empty($row[2])): ?><span class="muted">— <?= h((string) $row[2]) ?></span><?php endif; ?>
         </div>
     <?php endforeach; ?>
-    <div class="warn">🔒 اگر نصب کامل است، فایل <code>install.php</code> را پاک کن. برای نصب دوباره، اول <code>config/config.php</code> را حذف کن.</div>
+
+    <form method="post" style="margin-top:18px">
+        <input type="hidden" name="action" value="repair">
+        <input type="hidden" name="webhook_url" value="<?= h(detectWebhookUrl()) ?>">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px">
+            <input type="checkbox" name="reset_webhook" value="1" style="width:auto"> وب‌هوک را هم دوباره ثبت کن
+        </label>
+        <button class="btn" type="submit">🔧 تعمیر نصب — ساخت جدول‌های ناقص + رمز راه‌اندازی جدید</button>
+    </form>
+    <p class="muted" style="margin-top:8px">اگر بالای این صفحه «همهٔ جدول‌ها» یا «حداقل یک ادمین فعال» ✗ است، این دکمه را بزن؛ جدول‌های نداشته ساخته می‌شوند و یک <code>/claim</code> جدید می‌گیری.</p>
+
+    <div class="warn">🔒 اگر نصب کامل است (همه‌چیز ✓ و ادمین اضافه شده)، فایل <code>install.php</code> را پاک کن. برای نصب کاملاً تازه، اول <code>config/config.php</code> را حذف کن.</div>
 
 <?php else: /* فرم نصب */ ?>
     <?php $reqs = requirements(); $reqOk = requirementsOk($reqs); ?>
