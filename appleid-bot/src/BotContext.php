@@ -9,7 +9,7 @@ namespace AppleBot;
 class BotContext
 {
     public Db $db;
-    public Telegram $tg;
+    public Messenger $tg;
     public Orders $orders;
     public PartnerService $partners;
     public Settings $settings;
@@ -22,7 +22,7 @@ class BotContext
 
     public function __construct(
         Db $db,
-        Telegram $tg,
+        Messenger $tg,
         Orders $orders,
         PartnerService $partners,
         Settings $settings,

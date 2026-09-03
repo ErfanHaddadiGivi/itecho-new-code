@@ -108,8 +108,10 @@ CREATE TABLE IF NOT EXISTS conversations (
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS orders (
     id                    BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    telegram_user_id      BIGINT NOT NULL,
+    channel               ENUM('bot','web') NOT NULL DEFAULT 'bot',
+    telegram_user_id      BIGINT NOT NULL DEFAULT 0,
     telegram_username     VARCHAR(64) NULL,
+    web_user_id           INT UNSIGNED NULL,
     product_id            INT UNSIGNED NOT NULL,
     price_type            ENUM('regular','partner') NOT NULL DEFAULT 'regular',
     price_amount          BIGINT NOT NULL DEFAULT 0,
@@ -133,10 +135,25 @@ CREATE TABLE IF NOT EXISTS orders (
     PRIMARY KEY (id),
     KEY idx_orders_status (status),
     KEY idx_orders_user (telegram_user_id),
+    KEY idx_orders_web_user (web_user_id),
     KEY idx_orders_purge (status, completed_at, purged_at),
     KEY fk_orders_product (product_id),
     CONSTRAINT fk_orders_product FOREIGN KEY (product_id)
         REFERENCES products (id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------------------
+-- کاربران وبِ بخش اپل‌آیدی سایت (ورود با موبایل + رمز)
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS web_users (
+    id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    phone         VARCHAR(15) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    name          VARCHAR(120) NULL,
+    created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login_at DATETIME NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_web_users_phone (phone)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------------------

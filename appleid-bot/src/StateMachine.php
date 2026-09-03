@@ -215,9 +215,9 @@ class StateMachine
             'amount'     => $this->ctx->money((int) $order['price_amount']),
         ]);
 
-        $kb = Telegram::inlineKeyboard([
-            Telegram::inlineRow([[$this->ctx->t('btn_confirm'), 'ok']]),
-            Telegram::inlineRow([[$this->ctx->t('btn_edit'), 'edit'], [$this->ctx->t('btn_cancel'), 'cancel']]),
+        $kb = Messenger::inlineKeyboard([
+            Messenger::inlineRow([[$this->ctx->t('btn_confirm'), 'ok']]),
+            Messenger::inlineRow([[$this->ctx->t('btn_edit'), 'edit'], [$this->ctx->t('btn_cancel'), 'cancel']]),
         ]);
         $this->ctx->tg->sendMessage($chatId, $text, $kb);
     }
@@ -306,8 +306,8 @@ class StateMachine
         $this->ctx->tg->sendMessage($chatId, $this->ctx->t('code_received_wait'));
 
         // ارسال کد به ادمین‌ها همراه دکمهٔ ثبت اطلاعات نهایی
-        $kb = Telegram::inlineKeyboard([
-            Telegram::inlineRow([[$this->ctx->t('btn_final'), 'ord:final:' . $orderId]]),
+        $kb = Messenger::inlineKeyboard([
+            Messenger::inlineRow([[$this->ctx->t('btn_final'), 'ord:final:' . $orderId]]),
         ]);
         $this->ctx->notifyAdmins("🔑 کد تأیید سفارش #{$orderId}:\n<code>" . htmlspecialchars($code) . '</code>', $kb);
     }
@@ -335,15 +335,15 @@ class StateMachine
             . 'شماره: ' . htmlspecialchars($p['phone']) . "\n"
             . 'تولد: ' . htmlspecialchars($p['birthdate']);
 
-        $rows = [Telegram::inlineRow([
+        $rows = [Messenger::inlineRow([
             ['✅ تأیید و شروع', 'ord:approve:' . $orderId],
             ['❌ رد سفارش', 'ord:reject:' . $orderId],
         ])];
         if ($isPartner) {
-            $rows[] = Telegram::inlineRow([['🧾 ثبت روی حساب همکار', 'ord:oncredit:' . $orderId]]);
+            $rows[] = Messenger::inlineRow([['🧾 ثبت روی حساب همکار', 'ord:oncredit:' . $orderId]]);
         }
 
-        $this->ctx->notifyAdmins($text, Telegram::inlineKeyboard($rows));
+        $this->ctx->notifyAdmins($text, Messenger::inlineKeyboard($rows));
     }
 
     // ==================================================================
@@ -353,15 +353,15 @@ class StateMachine
     {
         $rows = [];
         foreach ($this->ctx->db->fetchAll('SELECT id, name FROM warranty_types WHERE is_active = 1 ORDER BY sort_order, id') as $w) {
-            $rows[] = Telegram::inlineRow([[$w['name'], 'w:' . $w['id']]]);
+            $rows[] = Messenger::inlineRow([[$w['name'], 'w:' . $w['id']]]);
         }
-        return Telegram::inlineKeyboard($rows);
+        return Messenger::inlineKeyboard($rows);
     }
 
     private function icloudKeyboard(): array
     {
-        return Telegram::inlineKeyboard([
-            Telegram::inlineRow([
+        return Messenger::inlineKeyboard([
+            Messenger::inlineRow([
                 [$this->ctx->t('btn_icloud_on'), 'ic:1'],
                 [$this->ctx->t('btn_icloud_off'), 'ic:0'],
             ]),

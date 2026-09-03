@@ -29,9 +29,15 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
 }
 
 // --- بررسی توکن مخفی وب‌هوک ---
-$expected = (string) ($config['webhook_secret'] ?? '');
-$provided = $_SERVER['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN'] ?? '';
-if ($expected === '' || !hash_equals($expected, (string) $provided)) {
+// دو روش (هرکدام که پیام‌رسان پشتیبانی کند): هدر مخفی، یا پارامتر ?s= در آدرس.
+$expected   = (string) ($config['webhook_secret'] ?? '');
+$fromHeader = (string) ($_SERVER['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN'] ?? '');
+$fromQuery  = (string) ($_GET['s'] ?? '');
+$ok = $expected !== '' && (
+    ($fromHeader !== '' && hash_equals($expected, $fromHeader)) ||
+    ($fromQuery  !== '' && hash_equals($expected, $fromQuery))
+);
+if (!$ok) {
     http_response_code(403);
     exit;
 }

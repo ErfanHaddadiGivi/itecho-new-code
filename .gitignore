@@ -23,6 +23,9 @@ uploads/posts/*
 !uploads/content/
 uploads/content/*
 !uploads/content/.gitkeep
+!uploads/appleid/
+uploads/appleid/*
+!uploads/appleid/.gitkeep
 
 # لاگ‌ها — خود پوشه بماند تا PHP بتواند در آن بنویسد
 logs/*

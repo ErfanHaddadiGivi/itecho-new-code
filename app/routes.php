@@ -87,8 +87,25 @@ $router->get('/blog/{slug}',  'BlogController@show');
 // نرخ لحظه‌ای ارز (دلار/درهم به تومان) — منبع: tgju.org
 $router->get('/api/rates',    'RatesController@index');
 
-// صفحهٔ فروش اپل‌آیدی آمریکا (لینک به ربات تلگرام)
-$router->get('/appleid',      'AppleIdController@index');
+// صفحهٔ فروش اپل‌آیدی آمریکا + پورتال وب (ورود با موبایل، ثبت سفارش، تحویل)
+$router->get('/appleid',                 'AppleIdController@index');
+$router->get('/appleid/register',        'AppleIdController@showRegister');
+$router->post('/appleid/register',       'AppleIdController@register');
+$router->get('/appleid/login',           'AppleIdController@showLogin');
+$router->post('/appleid/login',          'AppleIdController@login');
+$router->post('/appleid/logout',         'AppleIdController@logout');
+$router->get('/appleid/account',         'AppleIdController@account');
+
+$router->get('/appleid/order/new',       'AppleIdOrderController@create');
+$router->post('/appleid/order/new',      'AppleIdOrderController@store');
+$router->get('/appleid/order/{id}/info', 'AppleIdOrderController@info');
+$router->post('/appleid/order/{id}/info','AppleIdOrderController@saveInfo');
+$router->get('/appleid/order/{id}/confirm',  'AppleIdOrderController@confirm');
+$router->post('/appleid/order/{id}/confirm', 'AppleIdOrderController@toPayment');
+$router->get('/appleid/order/{id}/pay',      'AppleIdOrderController@pay');
+$router->post('/appleid/order/{id}/receipt', 'AppleIdOrderController@receipt');
+$router->post('/appleid/order/{id}/code',    'AppleIdOrderController@code');
+$router->post('/appleid/order/{id}/cancel',  'AppleIdOrderController@cancel');
 
 // سئو: نقشه‌ی سایت و robots
 $router->get('/sitemap.xml', 'SitemapController@index');

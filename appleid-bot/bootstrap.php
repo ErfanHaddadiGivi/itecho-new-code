@@ -39,7 +39,7 @@ date_default_timezone_set($config['timezone'] ?? 'Asia/Tehran');
 
 use AppleBot\Db;
 use AppleBot\Logger;
-use AppleBot\Telegram;
+use AppleBot\Messenger;
 use AppleBot\Crypto;
 use AppleBot\Orders;
 use AppleBot\PartnerService;
@@ -54,7 +54,7 @@ use AppleBot\RateLimiter;
 $log      = new Logger(BOT_BASE . '/logs', (bool) ($config['debug'] ?? false));
 $db       = new Db($config['db']);
 $crypto   = new Crypto((string) ($config['encryption_key'] ?? ''));
-$telegram = new Telegram((string) ($config['bot_token'] ?? ''), $log);
+$telegram = new Messenger((string) ($config['bot_token'] ?? ''), (string) ($config['api_base_url'] ?? ''), $log);
 $orders   = new Orders($db, $crypto);
 $partners = new PartnerService($db);
 $settings = new Settings($db);

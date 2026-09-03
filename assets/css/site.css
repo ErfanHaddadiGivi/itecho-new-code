@@ -1558,3 +1558,63 @@ a.ad-banner:hover {
     border: 1px solid var(--line); background: var(--surface);
 }
 .appleid-cta-bottom { text-align: center; margin: 0 0 36px; }
+
+/* =====================================================================
+   پورتال وب اپل‌آیدی: کارت ورود، ویزارد سفارش، پروفایل
+   ===================================================================== */
+.appleid-hero__actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 8px; }
+
+.auth-card {
+    max-width: 420px; margin: 32px auto; padding: 26px 22px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    box-shadow: var(--shadow);
+}
+.auth-card h1 { font-size: 20px; margin: 0 0 6px; }
+.auth-card__hint { color: var(--muted); font-size: 13px; margin: 0 0 18px; line-height: 1.9; }
+.auth-card__alt { text-align: center; margin: 16px 0 0; font-size: 13px; color: var(--muted); }
+
+.appleid-wizard {
+    max-width: 560px; margin: 28px auto; padding: 24px 22px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow);
+}
+.appleid-wizard h1 { font-size: 20px; margin: 0 0 4px; }
+.wizard-options { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+
+.appleid-summary { margin: 14px 0 18px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.appleid-summary__row { display: flex; justify-content: space-between; gap: 12px; padding: 11px 14px; border-top: 1px solid var(--line-soft); }
+.appleid-summary__row:first-child { border-top: none; }
+.appleid-summary__row span { color: var(--muted); }
+.appleid-summary__row--total { background: var(--brand-soft); }
+.appleid-summary__row--total b { color: var(--brand); font-size: 16px; }
+
+.appleid-pay { margin-bottom: 16px; }
+.appleid-pay__card {
+    display: flex; flex-direction: column; gap: 6px; align-items: center;
+    padding: 16px; margin-top: 10px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark)); color: #fff;
+}
+.appleid-pay__num { font-size: 20px; font-weight: 800; letter-spacing: 2px; font-variant-numeric: tabular-nums; }
+
+/* پروفایل */
+.appleid-account { max-width: 720px; margin: 26px auto; }
+.appleid-account__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.appleid-account__head h1 { font-size: 21px; margin: 0 0 2px; }
+.appleid-account__actions { display: flex; align-items: center; gap: 8px; }
+
+.appleid-order { border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; background: var(--surface); box-shadow: var(--shadow); }
+.appleid-order__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.appleid-order__id { font-weight: 800; margin-inline-end: 8px; }
+.appleid-order__meta { font-size: 13px; color: var(--ink); margin-bottom: 10px; line-height: 2; }
+.appleid-order__do { display: flex; gap: 8px; flex-wrap: wrap; }
+.appleid-order__hint { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+.appleid-order__hint--danger { color: var(--danger); }
+.code-form { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.code-form input { flex: 1; min-width: 140px; font-family: inherit; font-size: 15px; letter-spacing: 3px; text-align: center;
+    padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); }
+.appleid-order__delivered { margin-top: 8px; padding: 14px; border-radius: 12px; background: var(--ok-soft); border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent); }
+.appleid-order__delivered h3 { margin: 0 0 8px; font-size: 15px; color: var(--ok); }
+.appleid-creds { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: var(--font-mono); font-size: 13.5px; line-height: 2; direction: ltr; text-align: left; }
+
+.badge--warn  { background: var(--warn-soft); color: var(--warn); }
+.badge--danger{ background: var(--danger-soft); color: var(--danger); }
+.badge--brand { background: var(--brand-soft); color: var(--brand); }

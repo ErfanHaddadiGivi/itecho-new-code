@@ -17,10 +17,11 @@ class Orders
         $this->crypto = $crypto;
     }
 
-    /** ساخت سفارش پیش‌نویس بعد از انتخاب محصول */
+    /** ساخت سفارش پیش‌نویس از ربات (بعد از انتخاب محصول) */
     public function createDraft(int $telegramUserId, ?string $username, int $productId, string $priceType, int $priceAmount): int
     {
         return $this->db->insert('orders', [
+            'channel'           => 'bot',
             'telegram_user_id'  => $telegramUserId,
             'telegram_username' => $username,
             'product_id'        => $productId,
@@ -30,9 +31,46 @@ class Orders
         ]);
     }
 
+    /** ساخت سفارش پیش‌نویس از سایت (کاربر وب) */
+    public function createWebDraft(int $webUserId, int $productId, string $priceType, int $priceAmount): int
+    {
+        return $this->db->insert('orders', [
+            'channel'          => 'web',
+            'telegram_user_id' => 0,
+            'web_user_id'      => $webUserId,
+            'product_id'       => $productId,
+            'price_type'       => $priceType,
+            'price_amount'     => $priceAmount,
+            'status'           => 'draft',
+        ]);
+    }
+
     public function find(int $orderId): ?array
     {
         return $this->db->fetch('SELECT * FROM orders WHERE id = ? LIMIT 1', [$orderId]);
+    }
+
+    /** سفارش‌های یک کاربر وب (جدیدترین اول) */
+    public function listForWebUser(int $webUserId): array
+    {
+        return $this->db->fetchAll(
+            'SELECT o.*, p.icloud_enabled, w.name AS warranty_name
+               FROM orders o
+               LEFT JOIN products p ON p.id = o.product_id
+               LEFT JOIN warranty_types w ON w.id = p.warranty_type_id
+              WHERE o.web_user_id = ? AND o.channel = "web"
+              ORDER BY o.id DESC',
+            [$webUserId]
+        );
+    }
+
+    /** یک سفارشِ متعلق به همین کاربر وب (بررسی مالکیت) */
+    public function findForWebUser(int $orderId, int $webUserId): ?array
+    {
+        return $this->db->fetch(
+            'SELECT * FROM orders WHERE id = ? AND web_user_id = ? AND channel = "web" LIMIT 1',
+            [$orderId, $webUserId]
+        );
     }
 
     /** ذخیرهٔ یک فیلد شخصی رمزنگاری‌شده روی سفارش */

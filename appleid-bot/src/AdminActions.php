@@ -136,13 +136,16 @@ class AdminActions
             $this->ctx->orders->setStatus($orderId, 'approved_awaiting_code');
         }
 
-        // اطلاع به مشتری و انتقالش به حالت انتظار کد
-        $email = $this->ctx->orders->decryptPersonal($order)['email'];
-        $this->ctx->conv->save((int) $order['telegram_user_id'], States::AWAITING_CODE, [], $orderId);
-        $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('stay_online_for_code', ['email' => $email]));
+        // اطلاع به مشتری — فقط برای سفارش‌های ربات؛ کاربرِ وب وضعیت را در پروفایل می‌بیند
+        if (($order['channel'] ?? 'bot') === 'bot') {
+            $email = $this->ctx->orders->decryptPersonal($order)['email'];
+            $this->ctx->conv->save((int) $order['telegram_user_id'], States::AWAITING_CODE, [], $orderId);
+            $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('stay_online_for_code', ['email' => $email]));
+        }
 
         Audit::log($this->ctx->db, $adminId, $onCredit ? 'order_start_oncredit' : 'order_start', 'order', $orderId);
-        $this->ctx->tg->sendMessage($chatId, "✅ سفارش #{$orderId} شروع شد. منتظر کد کاربر بمان.");
+        $where = ($order['channel'] ?? 'bot') === 'web' ? '(سفارش سایت — کاربر از پروفایلش کد را وارد می‌کند)' : 'منتظر کد کاربر بمان.';
+        $this->ctx->tg->sendMessage($chatId, "✅ سفارش #{$orderId} شروع شد. {$where}");
     }
 
     private function askRejectReason(int $adminId, int $chatId, int $orderId): void
@@ -163,8 +166,10 @@ class AdminActions
         }
 
         $this->ctx->orders->reject($orderId, $reason);
-        $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('order_rejected', ['reason' => htmlspecialchars($reason)]));
-        $this->ctx->conv->reset((int) $order['telegram_user_id']);
+        if (($order['channel'] ?? 'bot') === 'bot') {
+            $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('order_rejected', ['reason' => htmlspecialchars($reason)]));
+            $this->ctx->conv->reset((int) $order['telegram_user_id']);
+        }
 
         Audit::log($this->ctx->db, $adminId, 'order_reject', 'order', $orderId, ['reason' => $reason]);
         $this->ctx->tg->sendMessage($chatId, "❌ سفارش #{$orderId} رد شد و به مشتری اطلاع داده شد.");
@@ -189,11 +194,14 @@ class AdminActions
 
         // تکمیل: کریدنشال رمز و ذخیره، کد تأیید بلافاصله پاک می‌شود
         $this->ctx->orders->complete($orderId, $credentials);
-        $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('order_completed', ['credentials' => $credentials]));
-        $this->ctx->conv->save((int) $order['telegram_user_id'], States::COMPLETED, [], null);
+        if (($order['channel'] ?? 'bot') === 'bot') {
+            $this->ctx->tg->sendMessage((int) $order['telegram_user_id'], $this->ctx->t('order_completed', ['credentials' => $credentials]));
+            $this->ctx->conv->save((int) $order['telegram_user_id'], States::COMPLETED, [], null);
+        }
 
         Audit::log($this->ctx->db, $adminId, 'order_complete', 'order', $orderId);
-        $this->ctx->tg->sendMessage($chatId, "🎉 سفارش #{$orderId} تکمیل و به مشتری تحویل شد.");
+        $extra = ($order['channel'] ?? 'bot') === 'web' ? '(کاربر از پروفایل سایت دریافت می‌کند)' : 'و به مشتری تحویل شد.';
+        $this->ctx->tg->sendMessage($chatId, "🎉 سفارش #{$orderId} تکمیل شد {$extra}");
     }
 
     // ==================================================================
@@ -208,7 +216,7 @@ class AdminActions
         }
         foreach ($pending as $p) {
             $name = $p['display_name'] ?: '—';
-            $kb = Telegram::inlineKeyboard([Telegram::inlineRow([
+            $kb = Messenger::inlineKeyboard([Messenger::inlineRow([
                 ['✅ تأیید', 'pa:approve:' . $p['id']],
                 ['❌ رد', 'pa:reject:' . $p['id']],
             ])]);

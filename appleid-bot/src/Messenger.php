@@ -3,26 +3,30 @@
 namespace AppleBot;
 
 /**
- * کلاینت Telegram Bot API با cURL خام — بدون هیچ کتابخانه‌ای.
+ * کلاینت Bot API با cURL خام — بدون هیچ کتابخانه‌ای.
  *
- * روی هاست اشتراکی بدون Composer/SSH کار می‌کند. همهٔ فراخوانی‌ها از
- * متد api() عبور می‌کنند که خطاها را در لاگ ثبت می‌کند (بدون دادهٔ حساس).
+ * برای «پیام‌رسان بله» است که API آن با تلگرام سازگار است؛ فقط آدرس پایه
+ * فرق دارد (از config می‌آید):
+ *   - بله:    https://tapi.bale.ai/bot
+ *   - تلگرام: https://api.telegram.org/bot
+ *
+ * روی هاست اشتراکی بدون Composer/SSH کار می‌کند.
  */
-class Telegram
+class Messenger
 {
-    private string $token;
     private string $apiBase;
     private Logger $log;
 
-    public function __construct(string $token, Logger $log)
+    public function __construct(string $token, string $apiBaseUrl, Logger $log)
     {
-        $this->token   = $token;
-        $this->apiBase = 'https://api.telegram.org/bot' . $token . '/';
+        $base          = rtrim($apiBaseUrl !== '' ? $apiBaseUrl : 'https://tapi.bale.ai/bot', '/');
+        $this->apiBase = $base . $token . '/';
         $this->log     = $log;
     }
 
     /**
-     * فراخوانی خام یک متد Bot API. خروجی: آرایهٔ نتیجه یا null در صورت خطا.
+     * فراخوانی خام یک متد. خروجی: آرایهٔ نتیجه یا null در صورت خطا.
+     * $params می‌تواند شامل CURLFile برای آپلود فایل باشد.
      */
     public function api(string $method, array $params = []): ?array
     {
@@ -31,8 +35,8 @@ class Telegram
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST           => true,
             CURLOPT_POSTFIELDS     => $params,
-            CURLOPT_TIMEOUT        => 20,
-            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_CONNECTTIMEOUT => 12,
         ]);
         $body = curl_exec($ch);
         $err  = curl_error($ch);
@@ -40,13 +44,13 @@ class Telegram
         curl_close($ch);
 
         if ($body === false || $body === '') {
-            $this->log->error('telegram_curl_failed', ['method' => $method, 'error' => $err, 'http' => $code]);
+            $this->log->error('messenger_curl_failed', ['method' => $method, 'error' => $err, 'http' => $code]);
             return null;
         }
 
         $json = json_decode($body, true);
         if (!is_array($json) || empty($json['ok'])) {
-            $this->log->error('telegram_api_error', [
+            $this->log->error('messenger_api_error', [
                 'method'      => $method,
                 'http'        => $code,
                 'description' => is_array($json) ? ($json['description'] ?? '') : 'invalid json',
@@ -73,11 +77,25 @@ class Telegram
         return $this->api('sendMessage', $params);
     }
 
-    public function sendPhoto(int $chatId, string $fileId, string $caption = '', ?array $replyMarkup = null): ?array
+    /** ارسال عکس با file_id یا URL */
+    public function sendPhoto(int $chatId, string $photo, string $caption = '', ?array $replyMarkup = null): ?array
     {
+        $params = ['chat_id' => $chatId, 'photo' => $photo, 'caption' => $caption, 'parse_mode' => 'HTML'];
+        if ($replyMarkup !== null) {
+            $params['reply_markup'] = json_encode($replyMarkup, JSON_UNESCAPED_UNICODE);
+        }
+        return $this->api('sendPhoto', $params);
+    }
+
+    /** آپلود یک فایل عکسِ روی هاست (مثلاً فیش واریزی سایت) به‌صورت multipart */
+    public function sendPhotoFile(int $chatId, string $filePath, string $caption = '', ?array $replyMarkup = null): ?array
+    {
+        if (!is_file($filePath)) {
+            return null;
+        }
         $params = [
             'chat_id'    => $chatId,
-            'photo'      => $fileId,
+            'photo'      => new \CURLFile($filePath),
             'caption'    => $caption,
             'parse_mode' => 'HTML',
         ];
@@ -120,7 +138,6 @@ class Telegram
         return $this->api('editMessageText', $params);
     }
 
-    /** حذف دکمه‌های پیام (بعد از اقدام ادمین) */
     public function clearReplyMarkup(int $chatId, int $messageId): ?array
     {
         return $this->api('editMessageReplyMarkup', [
@@ -132,7 +149,6 @@ class Telegram
 
     // --- سازنده‌های کیبورد اینلاین ---
 
-    /** یک ردیف دکمه از آرایهٔ [ [متن، callback_data], ... ] */
     public static function inlineRow(array $buttons): array
     {
         $row = [];
@@ -142,7 +158,6 @@ class Telegram
         return $row;
     }
 
-    /** ساخت کیبورد اینلاین از چند ردیف */
     public static function inlineKeyboard(array $rows): array
     {
         return ['inline_keyboard' => $rows];
