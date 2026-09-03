@@ -87,6 +87,9 @@ $router->get('/blog/{slug}',  'BlogController@show');
 // نرخ لحظه‌ای ارز (دلار/درهم به تومان) — منبع: tgju.org
 $router->get('/api/rates',    'RatesController@index');
 
+// صفحهٔ فروش اپل‌آیدی آمریکا (لینک به ربات تلگرام)
+$router->get('/appleid',      'AppleIdController@index');
+
 // سئو: نقشه‌ی سایت و robots
 $router->get('/sitemap.xml', 'SitemapController@index');
 $router->get('/robots.txt',  'SitemapController@robots');

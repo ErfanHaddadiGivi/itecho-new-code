@@ -24,6 +24,7 @@ class SettingController extends Controller
         'shipping' => 'ارسال و تحویل',
         'payment'  => 'درگاه پرداخت',
         'mail'     => 'ایمیل و کد تایید',
+        'appleid'  => 'اپل‌آیدی آمریکا',
     ];
 
     /** فیلدهایی که ورودی متنی ساده نیستند */
@@ -40,6 +41,7 @@ class SettingController extends Controller
         'hero_subtitle'    => 'textarea',
         'consult_popup_text'    => 'textarea',
         'consult_popup_enabled' => 'toggle',
+        'appleid_enabled'       => 'toggle',
     ];
 
     public function index(): void

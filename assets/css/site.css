@@ -1502,3 +1502,59 @@ a.ad-banner:hover {
                 0 16px 34px -16px color-mix(in srgb, var(--brand) 60%, rgba(0, 0, 0, .45));
 }
 @media (max-width: 600px) { .ad-banner { margin: 14px 0; border-radius: var(--radius-sm); } }
+
+/* =====================================================================
+   صفحهٔ فروش اپل‌آیدی آمریکا
+   ===================================================================== */
+.appleid-hero {
+    text-align: center; padding: 40px 20px; margin: 22px 0;
+    border-radius: 18px; border: 1px solid var(--line);
+    background:
+        radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 60%),
+        linear-gradient(180deg, color-mix(in srgb, var(--brand) 6%, var(--surface)), var(--surface));
+    box-shadow: var(--shadow);
+}
+.appleid-hero__badge {
+    display: inline-block; font-size: 12.5px; font-weight: 700;
+    color: var(--brand); background: var(--brand-soft);
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 14px;
+}
+.appleid-hero h1 { font-size: clamp(24px, 5vw, 40px); line-height: 1.35; margin: 0 0 12px; }
+.appleid-hero p { color: var(--muted); max-width: 640px; margin: 0 auto 18px; line-height: 2; }
+.appleid-hero__price {
+    display: inline-block; font-size: 15px; margin-bottom: 18px;
+    padding: 8px 16px; border-radius: 10px;
+    background: var(--accent-soft); color: var(--accent); font-weight: 600;
+}
+.appleid-cta { display: inline-flex; align-items: center; gap: 8px; }
+.appleid-hero__note { color: var(--muted); font-size: 12.5px; margin: 12px 0 0; }
+
+.appleid-steps {
+    display: grid; gap: 14px; margin: 26px 0;
+    grid-template-columns: 1fr;
+}
+@media (min-width: 720px) { .appleid-steps { grid-template-columns: repeat(3, 1fr); } }
+.appleid-step {
+    position: relative; text-align: center; padding: 24px 18px 20px;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--surface);
+    box-shadow: var(--shadow);
+}
+.appleid-step__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 50%; margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    color: #fff; font-weight: 800; font-size: 18px;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--brand) 45%, transparent);
+}
+.appleid-step h3 { margin: 0 0 6px; font-size: 16px; }
+.appleid-step p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.9; }
+
+.appleid-features {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 8px 0 28px;
+}
+.appleid-feature {
+    font-weight: 600; font-size: 13.5px; color: var(--ink);
+    padding: 10px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface);
+}
+.appleid-cta-bottom { text-align: center; margin: 0 0 36px; }

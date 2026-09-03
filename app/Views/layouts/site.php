@@ -86,6 +86,9 @@ $jsonLd = $jsonLd ?? '';
         <div class="container topbar__inner">
             <span class="topbar__note">ارسال به سراسر ایران · ضمانت اصالت کالا</span>
             <div class="topbar__links">
+                <?php if (App\Models\Setting::getBool('appleid_enabled', false)): ?>
+                    <a href="<?= e(url('appleid')) ?>">اپل‌آیدی آمریکا</a>
+                <?php endif; ?>
                 <a href="<?= e(url('blog')) ?>">مجله آیتکو</a>
                 <a href="<?= e(url('page/contact')) ?>">تماس با ما</a>
                 <a href="<?= e(url('page/about')) ?>">درباره ما</a>

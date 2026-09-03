@@ -1,0 +1,41 @@
+# =====================================================================
+#  ربات اپل‌آیدی — امنیت آپاچی
+#  فقط webhook.php از بیرون قابل دسترسی است؛ بقیه مسدودند.
+# =====================================================================
+
+Options -Indexes
+DirectoryIndex webhook.php
+
+# --- مسدود کردن دسترسی مستقیم به فایل‌ها/پوشه‌های حساس ---
+# config، src، cron، sql، lang، logs نباید از مرورگر باز شوند.
+RedirectMatch 404 (?i)/(config|src|cron|sql|lang|logs)(/|$)
+
+# --- مسدود کردن فایل‌های حساس بر اساس پسوند/نام ---
+<FilesMatch "(?i)(\.(php|sql|log|md|ini|json|lock|example)$)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# --- استثنا: فقط webhook.php اجازهٔ اجرا از بیرون دارد ---
+<Files "webhook.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+
+# --- فایل‌های مخفی (مثل .git و همین .htaccess) ---
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule (^|/)\.(?!well-known) - [F]
+</IfModule>
+
+AddDefaultCharset UTF-8
