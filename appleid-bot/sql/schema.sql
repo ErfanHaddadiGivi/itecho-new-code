@@ -217,6 +217,7 @@ INSERT IGNORE INTO settings (`key`, `value`) VALUES
     ('card_number', ''),
     ('card_holder_name', ''),
     ('sensitive_data_retention_days', '3'),
+    ('admin_setup_password_hash', ''),
     ('rate_limit_max_requests', '30'),
     ('rate_limit_window_seconds', '60'),
     ('session_ttl_hours', '24');

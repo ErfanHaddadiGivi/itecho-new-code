@@ -106,10 +106,56 @@ class AdminActions
             $this->setCard($adminId, $chatId, $t);
             return;
         }
+        if ($t === '/finishsetup') {
+            $this->finishSetup($adminId, $chatId);
+            return;
+        }
         if ($t === '/admin' || $t === '/help') {
             $this->ctx->tg->sendMessage($chatId, $this->adminHelp());
             return;
         }
+    }
+
+    /**
+     * دستور عمومی «/claim <رمز راه‌اندازی>» — کاربر با رمزِ نصب، خودش را ادمین می‌کند.
+     * این متد پیش از گیتِ ادمین در webhook صدا زده می‌شود (چون کاربر هنوز ادمین نیست).
+     */
+    public function handleClaim(int $userId, int $chatId, string $text): void
+    {
+        $parts = preg_split('/\s+/', trim($text), 2);
+        $pass  = $parts[1] ?? '';
+        $hash  = (string) $this->ctx->settings->get('admin_setup_password_hash', '');
+
+        if ($hash === '') {
+            $this->ctx->tg->sendMessage($chatId, 'ثبت ادمین قفل است. (رمز راه‌اندازی تنظیم/فعال نیست)');
+            return;
+        }
+        if ($pass === '' || !password_verify($pass, $hash)) {
+            $this->ctx->tg->sendMessage($chatId, 'رمز راه‌اندازی اشتباه است.');
+            return;
+        }
+
+        $exists = $this->ctx->db->fetch('SELECT id FROM admins WHERE telegram_user_id = ?', [$userId]);
+        if ($exists) {
+            $this->ctx->tg->sendMessage($chatId, 'شما از قبل ادمین هستید.');
+            return;
+        }
+
+        $this->ctx->db->insert('admins', ['telegram_user_id' => $userId, 'name' => null, 'is_active' => 1]);
+        Audit::log($this->ctx->db, $userId, 'admin_claim', 'admin', $userId);
+        $this->ctx->tg->sendMessage(
+            $chatId,
+            "✅ شما به‌عنوان ادمین ثبت شدید.\n"
+            . "برای دیدن دستورها /admin را بزنید.\n"
+            . "پس از افزودن همهٔ ادمین‌ها، برای قفل‌کردن ثبت، /finishsetup را بزنید."
+        );
+    }
+
+    private function finishSetup(int $adminId, int $chatId): void
+    {
+        $this->ctx->settings->set('admin_setup_password_hash', '');
+        Audit::log($this->ctx->db, $adminId, 'finish_setup', 'settings', 'admin_setup');
+        $this->ctx->tg->sendMessage($chatId, '🔒 ثبت ادمین قفل شد؛ رمز راه‌اندازی دیگر کار نمی‌کند.');
     }
 
     // ==================================================================
@@ -329,7 +375,8 @@ class AdminActions
             . "/partners — لیست همکارهای در انتظار تأیید\n"
             . "/addpartner &lt;tg_id&gt; &lt;نام&gt; — افزودن همکار جدید (در انتظار)\n"
             . "/ledger &lt;partner_id&gt; — خلاصه‌حساب همکار\n"
-            . "/settle &lt;partner_id&gt; &lt;amount&gt; — ثبت تسویه\n\n"
+            . "/settle &lt;partner_id&gt; &lt;amount&gt; — ثبت تسویه\n"
+            . "/finishsetup — قفل‌کردن ثبت ادمین (بعد از نصب)\n\n"
             . "تأیید/رد سفارش‌ها و ثبت اطلاعات نهایی، از روی دکمه‌های پیامِ هر سفارش انجام می‌شود.";
     }
 }

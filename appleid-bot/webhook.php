@@ -74,7 +74,13 @@ try {
         $conv  = $ctx->conv->get($userId);
         $isAdm = $ctx->isAdmin($userId);
 
-        $adminCommand = $text !== '' && preg_match('#^/(partners|addpartner|ledger|settle|setcard|admin|help)\b#', $text);
+        // «/claim <رمز>» عمومی است: کاربر با رمز راه‌اندازی خودش را ادمین می‌کند
+        if ($text !== '' && str_starts_with($text, '/claim')) {
+            $adminActions->handleClaim($userId, $chatId, $text);
+            exit;
+        }
+
+        $adminCommand = $text !== '' && preg_match('#^/(partners|addpartner|ledger|settle|setcard|finishsetup|admin|help)\b#', $text);
         $adminState   = str_starts_with($conv['state'], 'ADMIN_');
 
         if ($text !== '' && str_starts_with($text, '/start')) {

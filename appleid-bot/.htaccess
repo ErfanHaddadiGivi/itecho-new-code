@@ -21,8 +21,18 @@ RedirectMatch 404 (?i)/(config|src|cron|sql|lang|logs)(/|$)
     </IfModule>
 </FilesMatch>
 
-# --- استثنا: فقط webhook.php اجازهٔ اجرا از بیرون دارد ---
+# --- استثنا: فقط webhook.php و install.php از بیرون قابل دسترسی‌اند ---
+# ⚠️ install.php را پس از نصب حذف کنید.
 <Files "webhook.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+<Files "install.php">
     <IfModule mod_authz_core.c>
         Require all granted
     </IfModule>
