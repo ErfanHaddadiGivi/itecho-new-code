@@ -32,22 +32,22 @@ class SitemapController extends Controller
         $add('blog', null, 'daily', '0.7');
 
         // دسته‌بندی‌ها
-        foreach (Database::fetchAll("SELECT slug, updated_at FROM categories WHERE is_active = 1 ORDER BY sort_order") as $c) {
+        foreach ($this->rows("SELECT slug, updated_at FROM categories WHERE is_active = 1 ORDER BY sort_order") as $c) {
             $add('category/' . $c['slug'], $c['updated_at'] ?? null, 'weekly', '0.7');
         }
 
         // محصولات فعال
-        foreach (Database::fetchAll("SELECT slug, updated_at FROM products WHERE is_active = 1 ORDER BY updated_at DESC") as $p) {
+        foreach ($this->rows("SELECT slug, updated_at FROM products WHERE is_active = 1 ORDER BY updated_at DESC") as $p) {
             $add('product/' . $p['slug'], $p['updated_at'] ?? null, 'weekly', '0.8');
         }
 
         // مطالب منتشرشده
-        foreach (Database::fetchAll("SELECT slug, updated_at FROM posts WHERE is_published = 1 ORDER BY published_at DESC") as $post) {
+        foreach ($this->rows("SELECT slug, updated_at FROM posts WHERE is_published = 1 ORDER BY published_at DESC") as $post) {
             $add('blog/' . $post['slug'], $post['updated_at'] ?? null, 'monthly', '0.6');
         }
 
         // صفحات ثابت
-        foreach (Database::fetchAll("SELECT slug, updated_at FROM pages WHERE is_active = 1") as $page) {
+        foreach ($this->rows("SELECT slug, updated_at FROM pages WHERE is_active = 1") as $page) {
             $add('page/' . $page['slug'], $page['updated_at'] ?? null, 'monthly', '0.4');
         }
 
@@ -85,6 +85,22 @@ class SitemapController extends Controller
         echo "Disallow: /account\n";
         echo "\n";
         echo "Sitemap: " . $this->origin() . url('sitemap.xml') . "\n";
+    }
+
+    /**
+     * اجرای امن یک کوئری برای نقشه‌ی سایت.
+     *
+     * اگر جدولی هنوز ساخته نشده باشد (مثلاً مایگریشن مطالب/بلاگ روی هاست
+     * اجرا نشده)، به‌جای خطای ۵۰۰ روی /sitemap.xml، آن بخش خالی می‌ماند و
+     * بقیه‌ی نقشه‌ی سایت سالم تولید می‌شود.
+     */
+    private function rows(string $sql): array
+    {
+        try {
+            return Database::fetchAll($sql);
+        } catch (\PDOException $e) {
+            return [];
+        }
     }
 
     private function origin(): string
