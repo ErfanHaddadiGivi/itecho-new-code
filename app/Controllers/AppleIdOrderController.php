@@ -191,6 +191,32 @@ class AppleIdOrderController extends Controller
     // ==================================================================
     //  کمک‌کارها
     // ==================================================================
+    /**
+     * تصویرِ تحویل‌شدهٔ اپل‌آیدی را از پیام‌رسان (بله) می‌گیرد و استریم می‌کند.
+     * فقط صاحبِ سفارشِ تکمیل‌شده که تحویلش «عکس» است می‌تواند ببیند.
+     */
+    public function image(string $id): void
+    {
+        $this->guard();
+        $order = $this->ownedOrder((int) $id, ['completed']);
+
+        $creds = AppleId::crypto()->decrypt($order['final_credentials_enc'] ?? null) ?? '';
+        if (!str_starts_with($creds, 'img:')) {
+            $this->notFound('تصویری برای این سفارش نیست');
+        }
+        $file = AppleId::messenger()->downloadFile(substr($creds, 4));
+        if ($file === null) {
+            $this->notFound('دریافت تصویر ناموفق بود');
+        }
+
+        header('Content-Type: ' . $file['mime']);
+        header('Content-Length: ' . strlen($file['bytes']));
+        header('Cache-Control: private, max-age=300');
+        header('X-Content-Type-Options: nosniff');
+        echo $file['bytes'];
+        exit;
+    }
+
     private function guard(): int
     {
         if (!Setting::getBool('appleid_enabled', false) || !AppleId::available()) {

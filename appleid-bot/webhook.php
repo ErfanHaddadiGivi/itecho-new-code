@@ -74,6 +74,12 @@ try {
         $conv  = $ctx->conv->get($userId);
         $isAdm = $ctx->isAdmin($userId);
 
+        // بزرگ‌ترین سایز عکس (اگر پیام عکس باشد) — برای تحویل اپل‌آیدی به‌صورت عکس
+        $photoFileId = null;
+        if (isset($message['photo']) && is_array($message['photo']) && $message['photo'] !== []) {
+            $photoFileId = (string) (end($message['photo'])['file_id'] ?? '') ?: null;
+        }
+
         // «/claim <رمز>» عمومی است: کاربر با رمز راه‌اندازی خودش را ادمین می‌کند
         if ($text !== '' && str_starts_with($text, '/claim')) {
             $adminActions->handleClaim($userId, $chatId, $text);
@@ -87,7 +93,7 @@ try {
             // /start همیشه جریان خرید را از نو شروع می‌کند (حتی برای ادمین)
             $stateMachine->handleMessage($userId, $chatId, $username, $message);
         } elseif ($isAdm && ($adminCommand || $adminState)) {
-            $adminActions->handleMessage($userId, $chatId, $text, $conv);
+            $adminActions->handleMessage($userId, $chatId, $text, $conv, $photoFileId);
         } else {
             $stateMachine->handleMessage($userId, $chatId, $username, $message);
         }

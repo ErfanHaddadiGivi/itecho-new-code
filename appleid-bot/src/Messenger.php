@@ -17,11 +17,42 @@ class Messenger
     private string $apiBase;
     private Logger $log;
 
+    private string $fileBase;
+
     public function __construct(string $token, string $apiBaseUrl, Logger $log)
     {
-        $base          = rtrim($apiBaseUrl !== '' ? $apiBaseUrl : 'https://tapi.bale.ai/bot', '/');
-        $this->apiBase = $base . $token . '/';
-        $this->log     = $log;
+        $base           = rtrim($apiBaseUrl !== '' ? $apiBaseUrl : 'https://tapi.bale.ai/bot', '/');
+        $this->apiBase  = $base . $token . '/';
+        // آدرس دانلود فایل: بله/تلگرام هر دو مسیر «/file/bot» دارند.
+        $this->fileBase = str_replace('/bot', '/file/bot', $base) . $token . '/';
+        $this->log      = $log;
+    }
+
+    /**
+     * دانلود یک فایل (مثل عکسِ تحویلِ اپل‌آیدی) با file_id.
+     * خروجی: ['bytes' => محتوا, 'mime' => نوع] یا null.
+     */
+    public function downloadFile(string $fileId): ?array
+    {
+        $info = $this->api('getFile', ['file_id' => $fileId]);
+        $path = is_array($info) ? (string) ($info['file_path'] ?? '') : '';
+        if ($path === '') {
+            return null;
+        }
+        $ch = curl_init($this->fileBase . ltrim($path, '/'));
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_CONNECTTIMEOUT => 12,
+        ]);
+        $bytes = curl_exec($ch);
+        $mime  = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $code  = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if (!is_string($bytes) || $bytes === '' || $code >= 400) {
+            return null;
+        }
+        return ['bytes' => $bytes, 'mime' => $mime !== '' ? $mime : 'image/jpeg'];
     }
 
     /**

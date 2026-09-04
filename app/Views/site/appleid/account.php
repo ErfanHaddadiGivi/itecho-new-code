@@ -97,7 +97,14 @@ $statusLabels = [
                     <?php elseif ($o['status'] === 'completed'): ?>
                         <div class="appleid-order__delivered">
                             <h3>🎉 اپل‌آیدی شما</h3>
-                            <pre class="appleid-creds"><?= e($o['final_credentials']) ?></pre>
+                            <?php if (!empty($o['final_is_image'])): ?>
+                                <a href="<?= e(url('appleid/order/' . $o['id'] . '/image')) ?>" target="_blank" rel="noopener">
+                                    <img class="appleid-creds-img" src="<?= e(url('appleid/order/' . $o['id'] . '/image')) ?>" alt="اپل‌آیدی شما" loading="lazy" style="max-width:100%;border-radius:10px;border:1px solid #dbe4de">
+                                </a>
+                                <p class="appleid-order__hint">برای ذخیره، روی عکس بزن و نگهش دار.</p>
+                            <?php else: ?>
+                                <pre class="appleid-creds"><?= e($o['final_credentials']) ?></pre>
+                            <?php endif; ?>
                         </div>
 
                     <?php elseif ($o['status'] === 'rejected'): ?>

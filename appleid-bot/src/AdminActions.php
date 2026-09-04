@@ -70,7 +70,7 @@ class AdminActions
     // ==================================================================
     //  پیام‌های متنی ادمین (دستورها + پاسخ به درخواست‌های ورودی)
     // ==================================================================
-    public function handleMessage(int $adminId, int $chatId, string $text, array $conv): void
+    public function handleMessage(int $adminId, int $chatId, string $text, array $conv, ?string $photoFileId = null): void
     {
         $state = $conv['state'];
 
@@ -80,7 +80,13 @@ class AdminActions
             return;
         }
         if ($state === States::ADMIN_FINAL_CREDENTIALS) {
-            $this->finishFinal($adminId, $chatId, $conv, $text);
+            if ($photoFileId !== null && $photoFileId !== '') {
+                $this->finishFinalImage($adminId, $chatId, $conv, $photoFileId);
+            } elseif (trim($text) !== '') {
+                $this->finishFinal($adminId, $chatId, $conv, $text);
+            } else {
+                $this->ctx->tg->sendMessage($chatId, 'یک «متن» یا یک «عکس» از اطلاعات اپل‌آیدی بفرست.');
+            }
             return;
         }
 
@@ -224,7 +230,32 @@ class AdminActions
     private function askFinalCredentials(int $adminId, int $chatId, int $orderId): void
     {
         $this->ctx->conv->save($adminId, States::ADMIN_FINAL_CREDENTIALS, ['order_id' => $orderId], null);
-        $this->ctx->tg->sendMessage($chatId, "✍️ اطلاعات نهایی اپل‌آیدی سفارش #{$orderId} را بفرست (همین متن برای مشتری ارسال می‌شود):");
+        $this->ctx->tg->sendMessage($chatId, "📤 اطلاعات نهاییِ اپل‌آیدی سفارش #{$orderId} را بفرست.\nمی‌تونی «متن» بفرستی یا یک «عکس» (اسکرین‌شات) — همون برای مشتری (در بله یا پروفایل سایت) نشان داده می‌شود.");
+    }
+
+    /** تحویل به‌صورت عکس: file_id عکس با پیشوند img: ذخیره می‌شود. */
+    private function finishFinalImage(int $adminId, int $chatId, array $conv, string $fileId): void
+    {
+        $orderId = (int) ($conv['context']['order_id'] ?? 0);
+        $order   = $orderId ? $this->ctx->orders->find($orderId) : null;
+        $this->ctx->conv->reset($adminId);
+
+        if ($order === null) {
+            $this->ctx->tg->sendMessage($chatId, "سفارش پیدا نشد.");
+            return;
+        }
+
+        // ذخیرهٔ مرجع عکس (رمزشده) و تکمیل سفارش
+        $this->ctx->orders->complete($orderId, 'img:' . $fileId);
+
+        if (($order['channel'] ?? 'bot') === 'bot') {
+            $this->ctx->tg->sendPhoto((int) $order['telegram_user_id'], $fileId, "🎉 اپل‌آیدی شما آماده است. اطلاعات ورود در تصویر بالا.");
+            $this->ctx->conv->save((int) $order['telegram_user_id'], States::COMPLETED, [], null);
+        }
+
+        Audit::log($this->ctx->db, $adminId, 'order_complete', 'order', $orderId, ['kind' => 'image']);
+        $extra = ($order['channel'] ?? 'bot') === 'web' ? '(کاربر از پروفایل سایت می‌بیند)' : 'و عکس برای مشتری ارسال شد.';
+        $this->ctx->tg->sendMessage($chatId, "🎉 سفارش #{$orderId} با عکس تکمیل شد {$extra}");
     }
 
     private function finishFinal(int $adminId, int $chatId, array $conv, string $credentials): void

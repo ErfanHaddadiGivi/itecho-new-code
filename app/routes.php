@@ -106,6 +106,7 @@ $router->get('/appleid/order/{id}/pay',      'AppleIdOrderController@pay');
 $router->post('/appleid/order/{id}/receipt', 'AppleIdOrderController@receipt');
 $router->post('/appleid/order/{id}/code',    'AppleIdOrderController@code');
 $router->post('/appleid/order/{id}/cancel',  'AppleIdOrderController@cancel');
+$router->get('/appleid/order/{id}/image',    'AppleIdOrderController@image');
 
 // سئو: نقشه‌ی سایت و robots
 $router->get('/sitemap.xml', 'SitemapController@index');

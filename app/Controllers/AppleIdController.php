@@ -123,6 +123,8 @@ class AppleIdController extends Controller
             $o['final_credentials'] = ($o['status'] === 'completed')
                 ? ($crypto->decrypt($o['final_credentials_enc'] ?? null) ?? '')
                 : '';
+            // تحویل به‌صورت عکس؟ (مقدار با «img:» شروع می‌شود؛ خودِ file_id افشا نمی‌شود)
+            $o['final_is_image']   = str_starts_with((string) $o['final_credentials'], 'img:');
         }
         unset($o);
 
