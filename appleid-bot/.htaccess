@@ -1,6 +1,15 @@
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the "ea-php84" package as the default "PHP" programming language.
+# ⚠️ این بلوک را نگه دارید؛ کد ربات به PHP نسخهٔ ۸.۰+ نیاز دارد.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php84 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
+
 # =====================================================================
 #  ربات اپل‌آیدی — امنیت آپاچی
 #  فقط webhook.php از بیرون قابل دسترسی است؛ بقیه مسدودند.
+#  نیازمند PHP نسخهٔ ۸.۰ یا بالاتر.
 # =====================================================================
 
 Options -Indexes
