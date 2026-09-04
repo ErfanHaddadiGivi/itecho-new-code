@@ -50,6 +50,15 @@ RedirectMatch 404 (?i)/(config|src|cron|sql|lang|logs)(/|$)
         Allow from all
     </IfModule>
 </Files>
+<Files "panel.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
 
 # --- فایل‌های مخفی (مثل .git و همین .htaccess) ---
 <IfModule mod_rewrite.c>
