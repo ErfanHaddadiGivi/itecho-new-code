@@ -1,6 +1,17 @@
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the "ea-php84" package as the default "PHP" programming language.
+# ⚠️ این بلوک را نگه دارید. بدون آن، سرور به یک نسخهٔ PHP قدیمی برمی‌گردد و
+#    چون کد از قابلیت‌های PHP 8.1+ (مثل union type ها: int|float) استفاده می‌کند،
+#    کل سایت با «Parse error» و خطای ۵۰۰ می‌افتد.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php84 .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit
+
 # ===================================================================
 #  ایتکو — تنظیمات آپاچی
 #  این فایل روی هاست اشتراکی (cPanel) بدون تغییر کار می‌کند.
+#  نیازمند PHP نسخهٔ ۸.۱ یا بالاتر (به‌خاطر union types، match، never، mixed).
 # ===================================================================
 
 # --- جلوگیری از دیده شدن لیست فایل‌های پوشه‌ها ---
